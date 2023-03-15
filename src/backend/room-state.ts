@@ -1,5 +1,4 @@
-/* eslint-disable import/prefer-default-export */
-import { IUserState } from './messages';
+import { IUserState } from 'types';
 
 export class RoomState {
   private users: IUserState[] = [];

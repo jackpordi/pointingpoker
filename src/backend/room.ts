@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import WebSocket, { RawData } from 'ws';
-import { IncomingMessage, IUser } from './messages';
+import { IncomingMessage, IUser } from 'types';
 import { RoomState } from './room-state';
 
 export class Room {
@@ -25,7 +25,7 @@ export class Room {
   }
 
   public handleMessage(id: string, message: RawData) {
-    const parsed: IncomingMessage = JSON.parse(message.toString());
+    const parsed: IncomingMessage = JSON.parse(message.toString()) as IncomingMessage;
 
     if (parsed.type === 'Clear') {
       this.clearChoices();
@@ -52,7 +52,7 @@ export class Room {
     this.state.reveal();
   }
 
-  public async handleUserChoosePoints(id: string, points: number | null) {
+  public handleUserChoosePoints(id: string, points: number | null) {
     this.state.userPicked(id, points);
   }
 }

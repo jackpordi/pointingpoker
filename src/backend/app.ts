@@ -11,16 +11,19 @@ const room = new Room();
 
 websocket.on('connection', (socket: WebSocket, req: IncomingMessage) => {
   const uid = randomUUID();
-  const { name } = UrlUtils.parse(req.url!, true).query;
+  const name = UrlUtils.parse(req.url!, true).query?.name as string | undefined;
 
-  if (!name) socket.close();
+  if (!name) {
+    socket.close();
+    return;
+  }
 
-  const user = { id: uid, name: name as string, socket };
+  const user = { id: uid, name, socket };
   console.log(`User ${name} has joined the room`);
 
   socket.on('message', (data) => {
     room.handleMessage(uid, data);
-    console.log(`User ${name} has send a message ${data}`);
+    console.log(`User ${name} has sent a message ${data.toString()}`);
     room.broadcast();
   });
 

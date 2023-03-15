@@ -1,7 +1,10 @@
 module.exports = {
   extends: [
     'airbnb-base',
-    'airbnb-typescript/base'
+    'airbnb-typescript',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    "plugin:react/recommended"
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -10,5 +13,9 @@ module.exports = {
     ecmaFeatures: { impliedStrict: true },
   },
   plugins: ['@typescript-eslint'],
+  rules: {
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+  },
   root: true,
 };

@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { useEffect, useState } from 'preact/hooks';
 import {
   ClearMessage, IUserState, OutgoingMessage, PointsChosenMessage, RevealMessage,
@@ -8,7 +7,7 @@ export function useRoom(name: string) {
   const [ws, setWs] = useState<WebSocket | undefined>();
 
   const [state, setState] = useState<IUserState[]>([]);
-  const [ revealed, setRevealed ] = useState(false);
+  const [revealed, setRevealed] = useState(false);
 
   const [connected, setConnected] = useState(false);
 
@@ -23,9 +22,8 @@ export function useRoom(name: string) {
       setConnected(false);
     };
 
-    const onMessage = (message) => {
-      const parsed: OutgoingMessage = JSON.parse(message.data);
-      console.log(parsed);
+    const onMessage = (message: MessageEvent) => {
+      const parsed: OutgoingMessage = JSON.parse(message.data as string) as OutgoingMessage;
       setState(parsed.users);
       setRevealed(parsed.revealed);
     };

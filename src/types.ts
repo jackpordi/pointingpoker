@@ -46,6 +46,6 @@ export interface PointsChosenMessage extends WSMessage<'PointsChosen'> {
   points: number | null;
 }
 
-export interface RevealMessage extends WSMessage<'Reveal'> {}
+export type RevealMessage = WSMessage<'Reveal'>;
 
-export interface ClearMessage extends WSMessage<'Clear'> {}
+export type ClearMessage = WSMessage<'Clear'>;
