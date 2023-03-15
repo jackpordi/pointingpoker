@@ -1,0 +1,30 @@
+{
+  "name": "pointing-poker",
+  "version": "1.0.0",
+  "scripts": {
+    "lint": "yarn eslint './**/*.ts'",
+    "dev:backend": "nodemon src/backend/app.ts",
+    "dev:frontend": "yarn vite dev",
+    "build": "yarn tsc && yarn vite build"
+  },
+  "dependencies": {
+    "preact": "^10.11.3",
+    "eslint": "^8.36.0",
+    "typescript": "^4.9.5",
+    "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.5.0",
+    "@types/node": "^18.15.3",
+    "@types/ws": "^8.5.4",
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
+    "@typescript-eslint/parser": "^5.55.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "install": "^0.13.0",
+    "nodemon": "^2.0.21",
+    "npm": "^9.6.1",
+    "ts-node": "^10.9.1",
+    "vite": "^4.1.0"
+  }
+}
