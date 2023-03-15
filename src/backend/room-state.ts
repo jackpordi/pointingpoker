@@ -1,4 +1,4 @@
-import { IUserState } from 'types';
+import { IUserState } from "types";
 
 export class RoomState {
   private users: IUserState[] = [];

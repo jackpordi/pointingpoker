@@ -1,9 +1,9 @@
-import http from 'http';
-import express from 'express';
+import http from "http";
+import express from "express";
 
 const app = express();
 
-app.use(express.static('dist'));
+app.use(express.static("dist"));
 
 const server = http.createServer(app);
 

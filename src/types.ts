@@ -1,4 +1,4 @@
-import WebSocket from 'ws';
+import WebSocket from "ws";
 
 type UID = string;
 
@@ -19,7 +19,7 @@ export type IncomingMessage =
   | RevealMessage
   | ClearMessage;
 
-export interface OutgoingMessage extends WSMessage<'State'> {
+export interface OutgoingMessage extends WSMessage<"State"> {
   revealed: boolean;
   users: {
     id: string;
@@ -34,18 +34,18 @@ interface WSMessage<T extends string> {
 
 type UserState = Record<string, IUser>;
 
-export interface RevealStatusMessage extends WSMessage<'Status'> {
+export interface RevealStatusMessage extends WSMessage<"Status"> {
   state: UserState;
 }
 
-export interface OtherUserPickedMessage extends WSMessage<'OtherUserPicked'> {
+export interface OtherUserPickedMessage extends WSMessage<"OtherUserPicked"> {
   id: string;
 }
 
-export interface PointsChosenMessage extends WSMessage<'PointsChosen'> {
+export interface PointsChosenMessage extends WSMessage<"PointsChosen"> {
   points: number | null;
 }
 
-export type RevealMessage = WSMessage<'Reveal'>;
+export type RevealMessage = WSMessage<"Reveal">;
 
-export type ClearMessage = WSMessage<'Clear'>;
+export type ClearMessage = WSMessage<"Clear">;

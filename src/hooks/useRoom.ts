@@ -1,18 +1,26 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useState } from "preact/hooks";
 import {
   ClearMessage, IUserState, OutgoingMessage, PointsChosenMessage, RevealMessage,
-} from '../types';
+} from "../types";
+
+function constructWSUrl(name: string) {
+  const protocol = window.location.protocol === "https:"
+    ? "wss"
+    : "ws";
+
+  return `${protocol}://${window.location.host}/ws?name=${name}`;
+}
 
 export function useRoom(name: string) {
-  const [ws, setWs] = useState<WebSocket | undefined>();
+  const [ ws, setWs ] = useState<WebSocket | undefined>();
 
-  const [state, setState] = useState<IUserState[]>([]);
-  const [revealed, setRevealed] = useState(false);
+  const [ state, setState ] = useState<IUserState[]>([]);
+  const [ revealed, setRevealed ] = useState(false);
 
-  const [connected, setConnected] = useState(false);
+  const [ connected, setConnected ] = useState(false);
 
   function setupWS() {
-    const socket = new WebSocket(`ws://${window.location.host}/ws?name=${name}`);
+    const socket = new WebSocket(constructWSUrl(name));
 
     const onOpen = () => {
       setConnected(true);
@@ -27,15 +35,15 @@ export function useRoom(name: string) {
       setState(parsed.users);
       setRevealed(parsed.revealed);
     };
-    socket.addEventListener('open', onOpen);
-    socket.addEventListener('close', onClose);
-    socket.addEventListener('message', onMessage);
+    socket.addEventListener("open", onOpen);
+    socket.addEventListener("close", onClose);
+    socket.addEventListener("message", onMessage);
 
     setWs(socket);
     return () => {
-      socket.removeEventListener('open', onOpen);
-      socket.removeEventListener('close', onClose);
-      socket.removeEventListener('message', onMessage);
+      socket.removeEventListener("open", onOpen);
+      socket.removeEventListener("close", onClose);
+      socket.removeEventListener("message", onMessage);
       socket.close();
     };
   }
@@ -45,7 +53,7 @@ export function useRoom(name: string) {
   const pick = (n: number | null) => {
     if (!ws) return;
     const payload: PointsChosenMessage = {
-      type: 'PointsChosen',
+      type: "PointsChosen",
       points: n,
     };
     ws.send(JSON.stringify(payload));
@@ -54,7 +62,7 @@ export function useRoom(name: string) {
   const reveal = () => {
     if (!ws) return;
     const payload: RevealMessage = {
-      type: 'Reveal',
+      type: "Reveal",
     };
     ws.send(JSON.stringify(payload));
   };
@@ -62,7 +70,7 @@ export function useRoom(name: string) {
   const clear = () => {
     if (!ws) return;
     const payload: ClearMessage = {
-      type: 'Clear',
+      type: "Clear",
     };
     ws.send(JSON.stringify(payload));
   };

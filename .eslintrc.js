@@ -14,6 +14,9 @@ module.exports = {
   },
   plugins: ['@typescript-eslint'],
   rules: {
+    "@typescript-eslint/quotes": [ "error", "double" ],
+    quotes: "off",
+    "array-bracket-spacing": [ "error", "always"],
     "import/prefer-default-export": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "react/prop-types": "off",
