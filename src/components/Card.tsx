@@ -1,5 +1,6 @@
 import { FunctionComponent } from "preact";
 import { clsx } from "clsx";
+// @ts-ignore
 import { ReactComponent as Tick } from "../assets/tick.svg";
 
 interface Props {
