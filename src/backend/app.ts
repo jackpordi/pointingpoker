@@ -5,7 +5,7 @@ import { WebSocket, WebSocketServer } from 'ws';
 import { Room } from './room';
 import server from './server';
 
-const websocket = new WebSocketServer({ server });
+const websocket = new WebSocketServer({ server, path: '/ws' });
 
 const room = new Room();
 
