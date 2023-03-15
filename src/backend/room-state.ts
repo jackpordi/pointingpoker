@@ -28,14 +28,17 @@ export class RoomState {
   }
 
   public serialize() {
-    if (this.revealed) return JSON.stringify(this.users);
-
-    return JSON.stringify(
-      this.users.map(({ id, name, picked }) => ({
+    const users = this.revealed
+      ? this.users
+      : this.users.map(({ id, name, picked }) => ({
         id,
         name,
         picked: picked === null ? null : true,
-      })),
-    );
+      }));
+
+    return JSON.stringify({
+      revealed: this.revealed,
+      users,
+    });
   }
 }

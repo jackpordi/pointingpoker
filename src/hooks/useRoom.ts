@@ -1,18 +1,19 @@
 /* eslint-disable import/prefer-default-export */
 import { useEffect, useState } from 'preact/hooks';
 import {
-  ClearMessage, IUserState, PointsChosenMessage, RevealMessage,
+  ClearMessage, IUserState, OutgoingMessage, PointsChosenMessage, RevealMessage,
 } from '../types';
 
 export function useRoom(name: string) {
   const [ws, setWs] = useState<WebSocket | undefined>();
 
   const [state, setState] = useState<IUserState[]>([]);
+  const [ revealed, setRevealed ] = useState(false);
 
   const [connected, setConnected] = useState(false);
 
   function setupWS() {
-    const socket = new WebSocket(`ws://localhost:3000/ws?name=${name}`);
+    const socket = new WebSocket(`ws://${window.location.host}/ws?name=${name}`);
 
     const onOpen = () => {
       setConnected(true);
@@ -23,8 +24,10 @@ export function useRoom(name: string) {
     };
 
     const onMessage = (message) => {
-      const parsed = JSON.parse(message.data);
-      setState(parsed);
+      const parsed: OutgoingMessage = JSON.parse(message.data);
+      console.log(parsed);
+      setState(parsed.users);
+      setRevealed(parsed.revealed);
     };
     socket.addEventListener('open', onOpen);
     socket.addEventListener('close', onClose);
@@ -66,8 +69,8 @@ export function useRoom(name: string) {
     ws.send(JSON.stringify(payload));
   };
 
-  console.log(connected);
   return {
+    revealed,
     connected,
     users: state,
     pick,

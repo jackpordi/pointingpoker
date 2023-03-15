@@ -20,19 +20,16 @@ export type IncomingMessage =
   | ClearMessage;
 
 export interface OutgoingMessage extends WSMessage<'State'> {
-  state: {
+  revealed: boolean;
+  users: {
     id: string;
     name: string;
     picked: true | null | number;
-  }
+  }[];
 }
 
 interface WSMessage<T extends string> {
   type: T;
-}
-
-export interface NewJoinerMessage extends WSMessage<'NewJoiner'> {
-  name: string;
 }
 
 type UserState = Record<string, IUser>;
