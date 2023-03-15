@@ -5,7 +5,8 @@
     "lint": "yarn eslint './**/*.ts'",
     "dev:backend": "yarn nodemon",
     "dev:frontend": "yarn vite dev",
-    "build": "yarn tsc && yarn vite build"
+    "build": "yarn tsc && yarn vite build",
+    "prod": "node out/backend/app.js"
   },
   "dependencies": {
     "express": "^4.18.2",
