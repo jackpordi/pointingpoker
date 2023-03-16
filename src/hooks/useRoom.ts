@@ -1,6 +1,12 @@
 import { useEffect, useState } from "preact/hooks";
 import {
-  ClearMessage, IUserState, OutgoingMessage, PointsChosenMessage, RevealMessage,
+  ClearMessage,
+  IUserState,
+  StateMessage,
+  PointsChosenMessage,
+  RevealMessage,
+  OutgoingMessage,
+  PingMessage,
 } from "../types";
 
 function constructWSUrl(name: string) {
@@ -30,10 +36,20 @@ export function useRoom(name: string) {
       setConnected(false);
     };
 
+    const pingInterval = setInterval(() => {
+      const payload: PingMessage = { type: "Ping" };
+      socket.send(JSON.stringify(payload));
+    }, 5000);
+
     const onMessage = (message: MessageEvent) => {
       const parsed: OutgoingMessage = JSON.parse(message.data as string) as OutgoingMessage;
-      setState(parsed.users);
-      setRevealed(parsed.revealed);
+
+      if (parsed.type === "State") {
+        setState(parsed.users);
+        setRevealed(parsed.revealed);
+      } else if (parsed.type === "Pong") {
+        // Do nothing
+      }
     };
     socket.addEventListener("open", onOpen);
     socket.addEventListener("close", onClose);
@@ -41,6 +57,7 @@ export function useRoom(name: string) {
 
     setWs(socket);
     return () => {
+      clearInterval(pingInterval);
       socket.removeEventListener("open", onOpen);
       socket.removeEventListener("close", onClose);
       socket.removeEventListener("message", onMessage);

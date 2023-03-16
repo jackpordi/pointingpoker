@@ -17,9 +17,14 @@ export interface IUser {
 export type IncomingMessage =
   | PointsChosenMessage
   | RevealMessage
-  | ClearMessage;
+  | ClearMessage
+  | PingMessage;
 
-export interface OutgoingMessage extends WSMessage<"State"> {
+export type OutgoingMessage = StateMessage | PongMessage;
+
+export type PongMessage = WSMessage<"Pong">;
+
+export interface StateMessage extends WSMessage<"State"> {
   revealed: boolean;
   users: {
     id: string;
@@ -49,3 +54,5 @@ export interface PointsChosenMessage extends WSMessage<"PointsChosen"> {
 export type RevealMessage = WSMessage<"Reveal">;
 
 export type ClearMessage = WSMessage<"Clear">;
+
+export type PingMessage = WSMessage<"Ping">;

@@ -22,7 +22,7 @@ websocket.on("connection", (socket: WebSocket, req: IncomingMessage) => {
   console.log(`User ${name} has joined the room`);
 
   socket.on("message", (data) => {
-    room.handleMessage(uid, data);
+    room.handleMessage(uid, data, socket);
     console.log(`User ${name} has sent a message ${data.toString()}`);
     room.broadcast();
   });

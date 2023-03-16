@@ -36,6 +36,7 @@ export class RoomState {
       }));
 
     return JSON.stringify({
+      type: "State",
       revealed: this.revealed,
       users,
     });

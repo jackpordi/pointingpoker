@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import WebSocket, { RawData } from "ws";
-import { IncomingMessage, IUser } from "types";
+import { IncomingMessage, IUser, PongMessage } from "types";
 import { RoomState } from "./room-state";
 
 export class Room {
@@ -24,7 +24,7 @@ export class Room {
     this.sockets = this.sockets.filter((s) => s !== user.socket);
   }
 
-  public handleMessage(id: string, message: RawData) {
+  public handleMessage(id: string, message: RawData, socket: WebSocket) {
     const parsed: IncomingMessage = JSON.parse(message.toString()) as IncomingMessage;
 
     if (parsed.type === "Clear") {
@@ -33,7 +33,18 @@ export class Room {
       this.handleUserChoosePoints(id, parsed.points);
     } else if (parsed.type === "Reveal") {
       this.revealChoices();
+    } else if (parsed.type === "Ping") {
+      this.pong(socket);
     }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  public pong(socket: WebSocket) {
+    const pong: PongMessage = {
+      type: "Pong",
+    };
+
+    socket.send(JSON.stringify(pong));
   }
 
   public broadcast() {
