@@ -16,7 +16,7 @@ export const Button: FunctionComponent<Props> = ({
   <button
       disabled={disabled}
       type="button"
-      className={`${props.class!} transition ease-in-out duration-200 text-white bg-slate-500 hover:bg-slate-700 focus:ring-4 focus:ring-blue font-medium rounded-lg py-2 px-3 py-2 disabled:bg-gray-300`}
+      className={`${props.class!} text-sm md:text-md transition ease-in-out duration-200 text-white bg-indigo-600 hover:bg-indigo-800 focus:ring-4 focus:ring-blue font-medium rounded-lg py-3 px-3 disabled:bg-gray-300`}
       onClick={onClick}
     >
       { text}

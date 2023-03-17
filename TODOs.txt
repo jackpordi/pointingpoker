@@ -1,0 +1,12 @@
+High Priority:
+
+- Change metadata
+- Add reconnect logic
+- Add rooms
+- Add prerendering
+- Change option to use cards
+- Show currently selected value
+
+Low Priority:
+- Add horizontal scaling with Redis
+

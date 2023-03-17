@@ -1,20 +1,12 @@
-import { useState } from "preact/hooks";
-import { InputName } from "./components/InputName";
-import { Session } from "./components/Session";
+import { Home } from "pages/home";
+import { Room } from "pages/room";
+import Router, { Route } from "preact-router";
 
 export function App() {
-  const [ name, setName ] = useState("");
-
   return (
-    <div className="flex flex-col w-full items-center min-h-screen justify-center">
-      <h1 className="md:text-3xl lg:text-5xl font-bold my-4">
-        Planning Poker
-      </h1>
-      { name ? (
-        <Session name={name}/>
-      ) : (
-      <InputName setName={setName}/>
-      )}
-    </div>
+    <Router>
+      <Route component={Home} path="/" />
+      <Route component={Room} path="/:roomId" />
+    </Router>
   );
 }

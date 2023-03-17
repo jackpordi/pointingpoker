@@ -2,22 +2,21 @@ import { useEffect, useState } from "preact/hooks";
 import {
   ClearMessage,
   IUserState,
-  StateMessage,
   PointsChosenMessage,
   RevealMessage,
   OutgoingMessage,
   PingMessage,
 } from "../types";
 
-function constructWSUrl(name: string) {
+function constructWSUrl(roomId: string, name: string) {
   const protocol = window.location.protocol === "https:"
     ? "wss"
     : "ws";
 
-  return `${protocol}://${window.location.host}/ws?name=${name}`;
+  return `${protocol}://${window.location.host}/ws?name=${name}&room=${roomId}`;
 }
 
-export function useRoom(name: string) {
+export function useRoom(id: string, name: string) {
   const [ ws, setWs ] = useState<WebSocket | undefined>();
 
   const [ state, setState ] = useState<IUserState[]>([]);
@@ -26,7 +25,7 @@ export function useRoom(name: string) {
   const [ connected, setConnected ] = useState(false);
 
   function setupWS() {
-    const socket = new WebSocket(constructWSUrl(name));
+    const socket = new WebSocket(constructWSUrl(id, name));
 
     const onOpen = () => {
       setConnected(true);

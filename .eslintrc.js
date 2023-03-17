@@ -21,7 +21,10 @@ module.exports = {
     "@typescript-eslint/no-non-null-assertion": "off",
     "react/prop-types": "off",
     "react/jsx-uses-react": "off",
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "no-restricted-syntax": "off",
+    "import/prefer-default-export": "off",
+    "class-methods-use-this": "off"
   },
   root: true,
 };

@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import WebSocket, { RawData } from "ws";
 import { IncomingMessage, IUser, PongMessage } from "types";
 import { RoomState } from "./room-state";
@@ -8,8 +7,14 @@ export class Room {
 
   private readonly state = new RoomState();
 
-  constructor() {
+  constructor(
+    public readonly id: string,
+  ) {
     this.join = this.join.bind(this);
+  }
+
+  public get occupants() {
+    return this.state.size;
   }
 
   public join(user: IUser) {
@@ -38,7 +43,6 @@ export class Room {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   public pong(socket: WebSocket) {
     const pong: PongMessage = {
       type: "Pong",
@@ -49,7 +53,6 @@ export class Room {
 
   public broadcast() {
     const data = this.state.serialize();
-    // eslint-disable-next-line no-restricted-syntax
     for (const socket of this.sockets) {
       socket.send(data);
     }

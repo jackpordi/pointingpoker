@@ -3,23 +3,26 @@ import { IncomingMessage } from "http";
 import UrlUtils from "url";
 import { WebSocket, WebSocketServer } from "ws";
 import { Room } from "./room";
+import { manager } from "./room-manager";
 import server from "./server";
 
 const websocket = new WebSocketServer({ server, path: "/ws" });
-
-const room = new Room();
 
 websocket.on("connection", (socket: WebSocket, req: IncomingMessage) => {
   const uid = randomUUID();
   const name = UrlUtils.parse(req.url!, true).query?.name as string | undefined;
 
-  if (!name) {
+  const roomId = UrlUtils.parse(req.url!, true).query?.room as string | undefined;
+
+  if (!name || !roomId) {
     socket.close();
     return;
   }
 
+  const room = manager.getOrCreate(roomId.toUpperCase());
+
   const user = { id: uid, name, socket };
-  console.log(`User ${name} has joined the room`);
+  console.log(`User ${name} has joined room ${roomId.toUpperCase()}`);
 
   socket.on("message", (data) => {
     room.handleMessage(uid, data, socket);
@@ -30,6 +33,7 @@ websocket.on("connection", (socket: WebSocket, req: IncomingMessage) => {
   socket.on("close", () => {
     console.log(`User ${name} has left the room`);
     room.leave(user);
+    manager.checkVacancy(room.id);
     room.broadcast();
   });
 

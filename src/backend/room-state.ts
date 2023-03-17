@@ -5,6 +5,10 @@ export class RoomState {
 
   private revealed = false;
 
+  public get size() {
+    return this.users.length;
+  }
+
   public addUser(id: string, name: string) {
     this.users.push({ id, name, picked: null });
   }
