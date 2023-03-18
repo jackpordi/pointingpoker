@@ -24,7 +24,14 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "no-restricted-syntax": "off",
     "import/prefer-default-export": "off",
-    "class-methods-use-this": "off"
+    "no-void": "off",
+    "class-methods-use-this": "off",
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        {
+          "checksVoidReturn": false
+        }
+      ]
   },
   root: true,
 };

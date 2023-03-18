@@ -24,7 +24,7 @@ export const Session: FunctionComponent<Props> = ({
   const [ linkCopied, setLinkCopied ] = useState(false);
 
   const copyLink = async () => {
-    await navigator.clipboard.writeText("abc");
+    await navigator.clipboard.writeText(window.location.href);
     setLinkCopied(true);
     setTimeout(() => setLinkCopied(false), 3000);
   };
@@ -39,7 +39,13 @@ export const Session: FunctionComponent<Props> = ({
 
       <div className="flex flex-1 flex-col items-center justify-center">
         <div className="flex items-center align-center flex-row flex-wrap">
-          { users.map((u) => <Card key={u.id} name={u.name} points={u.picked} revealed={revealed}/>)}
+          {
+            users.map((u) => <Card
+              key={u.id}
+              name={u.name}
+              points={u.picked}
+              revealed={revealed}/>)
+          }
         </div>
         <RadioButtons
           choices={choices}
