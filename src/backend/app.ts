@@ -2,7 +2,8 @@ import { randomUUID } from "crypto";
 import { IncomingMessage } from "http";
 import UrlUtils from "url";
 import { WebSocket, WebSocketServer } from "ws";
-import { Room } from "./room";
+import { Logger } from "../logger";
+
 import { manager } from "./room-manager";
 import server from "./server";
 
@@ -22,16 +23,16 @@ websocket.on("connection", (socket: WebSocket, req: IncomingMessage) => {
   const room = manager.getOrCreate(roomId.toUpperCase());
 
   const user = { id: uid, name, socket };
-  console.log(`User ${name} has joined room ${roomId.toUpperCase()}`);
+  Logger.info(`User ${name} has joined room ${roomId.toUpperCase()}`);
 
   socket.on("message", (data) => {
     room.handleMessage(uid, data, socket);
-    console.log(`User ${name} has sent a message ${data.toString()}`);
+    Logger.info(`User ${name} has sent a message ${data.toString()}`);
     room.broadcast();
   });
 
   socket.on("close", () => {
-    console.log(`User ${name} has left the room`);
+    Logger.info(`User ${name} has left the room`);
     room.leave(user);
     manager.checkVacancy(room.id);
     room.broadcast();
@@ -42,5 +43,5 @@ websocket.on("connection", (socket: WebSocket, req: IncomingMessage) => {
 });
 
 server.listen(8080, "0.0.0.0", () => {
-  console.log("Server is listening!");
+  Logger.info("Server is listening on port 8080");
 });
