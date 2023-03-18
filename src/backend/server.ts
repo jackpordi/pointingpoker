@@ -1,5 +1,6 @@
 import http from "http";
 import express from "express";
+import path from "path";
 import { generateRoomId } from "./utils";
 import { manager } from "./room-manager";
 
@@ -16,6 +17,10 @@ app.put("/api/room", (_, res) => {
   } else {
     res.json({ id: generateRoomId() });
   }
+});
+
+app.get("/:room", (req, res) => {
+  res.sendFile("dist/index.html", { root: path.join(__dirname, "..", "..") });
 });
 
 export default server;
