@@ -53,6 +53,7 @@ export function useRoom(id: string, name: string) {
 
         const myPick = me?.picked;
         if (typeof myPick === "number") setChosen(myPick);
+        else (setChosen(undefined));
       } else if (parsed.type === "Identify") {
         uid.current = parsed.id;
       } else if (parsed.type === "Pong") {
