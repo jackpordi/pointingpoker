@@ -20,7 +20,7 @@ export type IncomingMessage =
   | ClearMessage
   | PingMessage;
 
-export type OutgoingMessage = StateMessage | PongMessage;
+export type OutgoingMessage = StateMessage | PongMessage | IdentifyMessage;
 
 export type PongMessage = WSMessage<"Pong">;
 
@@ -49,6 +49,10 @@ export interface OtherUserPickedMessage extends WSMessage<"OtherUserPicked"> {
 
 export interface PointsChosenMessage extends WSMessage<"PointsChosen"> {
   points: number | null;
+}
+
+export interface IdentifyMessage extends WSMessage<"Identify"> {
+  id: string;
 }
 
 export type RevealMessage = WSMessage<"Reveal">;

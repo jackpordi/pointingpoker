@@ -3,12 +3,6 @@ High Priority:
 - Change metadata
 - Add reconnect logic
 - Add prerendering
-- Add 404 page
-- Show currently selected value
-
-Medium priority:
-- Add logs
 
 Low Priority:
 - Add horizontal scaling with Redis
-

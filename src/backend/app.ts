@@ -26,9 +26,8 @@ websocket.on("connection", (socket: WebSocket, req: IncomingMessage) => {
   Logger.info(`User ${name} has joined room ${roomId.toUpperCase()}`);
 
   socket.on("message", (data) => {
-    room.handleMessage(uid, data, socket);
     Logger.info(`User ${name} has sent a message ${data.toString()}`);
-    room.broadcast();
+    room.handleMessage(uid, data, socket);
   });
 
   socket.on("close", () => {

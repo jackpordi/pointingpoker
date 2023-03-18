@@ -18,7 +18,7 @@ export const Session: FunctionComponent<Props> = ({
   name,
 }) => {
   const {
-    users, pick, reveal, clear, revealed,
+    users, pick, reveal, clear, revealed, chosen,
   } = useRoom(id, name);
 
   const [ linkCopied, setLinkCopied ] = useState(false);
@@ -48,6 +48,7 @@ export const Session: FunctionComponent<Props> = ({
           }
         </div>
         <RadioButtons
+          chosen={chosen}
           choices={choices}
           revealed={revealed}
           onClick={pick}

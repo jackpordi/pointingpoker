@@ -1,9 +1,11 @@
 import WebSocket, { RawData } from "ws";
-import { IncomingMessage, IUser, PongMessage } from "types";
+import {
+  IdentifyMessage, IncomingMessage, IUser, PongMessage,
+} from "types";
 import { RoomState } from "./room-state";
 
 export class Room {
-  private sockets: WebSocket[] = [];
+  private connections: IUser[] = [];
 
   private readonly state = new RoomState();
 
@@ -20,13 +22,20 @@ export class Room {
   public join(user: IUser) {
     const { id, name, socket } = user;
 
-    this.sockets.push(socket);
+    this.connections.push(user);
     this.state.addUser(id, name);
+
+    const payload: IdentifyMessage = {
+      type: "Identify",
+      id,
+    };
+
+    socket.send(JSON.stringify(payload));
   }
 
   public leave(user: IUser) {
     this.state.removeUser(user.id);
-    this.sockets = this.sockets.filter((s) => s !== user.socket);
+    this.connections = this.connections.filter((conn) => conn.socket !== user.socket);
   }
 
   public handleMessage(id: string, message: RawData, socket: WebSocket) {
@@ -41,6 +50,10 @@ export class Room {
     } else if (parsed.type === "Ping") {
       this.pong(socket);
     }
+
+    if (parsed.type !== "Ping") {
+      this.broadcast();
+    }
   }
 
   public pong(socket: WebSocket) {
@@ -53,8 +66,21 @@ export class Room {
 
   public broadcast() {
     const data = this.state.serialize();
-    for (const socket of this.sockets) {
-      socket.send(data);
+    for (const conn of this.connections) {
+      const payload = {
+        ...data,
+        users: data.users.map((u) => {
+          if (data.revealed) return u;
+          if (u.id === conn.id) return u;
+
+          return {
+            ...u,
+            picked: u.picked === null ? null : true,
+          };
+        }),
+      };
+
+      conn.socket.send(JSON.stringify(payload));
     }
   }
 

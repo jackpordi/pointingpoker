@@ -1,4 +1,4 @@
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import {
   ClearMessage,
   IUserState,
@@ -24,6 +24,9 @@ export function useRoom(id: string, name: string) {
 
   const [ connected, setConnected ] = useState(false);
 
+  const uid = useRef<string | undefined>();
+  const [ chosen, setChosen ] = useState<number | undefined>();
+
   function setupWS() {
     const socket = new WebSocket(constructWSUrl(id, name));
 
@@ -46,6 +49,12 @@ export function useRoom(id: string, name: string) {
       if (parsed.type === "State") {
         setState(parsed.users);
         setRevealed(parsed.revealed);
+        const me = parsed.users.find((u) => u.id === uid.current);
+
+        const myPick = me?.picked;
+        if (typeof myPick === "number") setChosen(myPick);
+      } else if (parsed.type === "Identify") {
+        uid.current = parsed.id;
       } else if (parsed.type === "Pong") {
         // Do nothing
       }
@@ -96,6 +105,7 @@ export function useRoom(id: string, name: string) {
     connected,
     users: state,
     pick,
+    chosen,
     reveal,
     clear,
   } as const;
