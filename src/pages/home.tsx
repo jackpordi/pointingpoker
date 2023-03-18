@@ -23,7 +23,7 @@ export function Home() {
     <div className="w-full min-h-screen px-3">
       <div className="flex flex-col items-center justify-center mx-auto max-w-4xl w-full min-h-screen">
 
-        <h1 className="md:text-3xl lg:text-5xl font-bold my-4">
+        <h1 className="text-5xl font-bold my-4">
           Pointing Poker
         </h1>
 

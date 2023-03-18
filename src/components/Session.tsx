@@ -32,7 +32,7 @@ export const Session: FunctionComponent<Props> = ({
   return (
     <div className="flex flex-col items-center min-h-screen">
 
-      <button onClick={() => copyLink()} className="my-2 text-blue-500 hover:underline flex flex-row items-center">
+      <button onClick={copyLink} className="my-2 text-blue-500 hover:underline flex flex-row items-center">
         <ClipboardIcon className="w-4 h-4 mr-1" />
         { linkCopied ? "Link copied!" : "Copy Invite Link"}
       </button>
