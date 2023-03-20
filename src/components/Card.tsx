@@ -39,17 +39,17 @@ const InnerCard: FunctionComponent<InnerCardProps> = ({ name, points, face }) =>
  </div>;
 };
 
-export const Card: FunctionComponent<Props> = ({
+export const DesktopCard: FunctionComponent<Props> = ({
   name,
   points,
   revealed,
 }) => (
-  <div className={"h-48 w-32 m-2"} style={{ perspective: "1000px", backgroundColor: "transparent" }}>
-    <div style={{
-      position: "relative", width: "100%", height: "100%", textAlign: "center", transition: "transform 0.8s", transformStyle: "preserve-3d", transform: revealed ? "rotateY(180deg)" : null,
-    }}>
-       <InnerCard name={name} points={points} revealed={!revealed} face="front"/>
-       <InnerCard name={name} points={points} revealed={revealed} face="back"/>
+    <div className="h-48 w-32 m-2" style={{ perspective: "1000px", backgroundColor: "transparent" }}>
+      <div style={{
+        position: "relative", width: "100%", height: "100%", textAlign: "center", transition: "transform 0.8s", transformStyle: "preserve-3d", transform: revealed ? "rotateY(180deg)" : null,
+      }}>
+        <InnerCard name={name} points={points} revealed={!revealed} face="front"/>
+        <InnerCard name={name} points={points} revealed={revealed} face="back"/>
+      </div>
     </div>
-  </div>
 );

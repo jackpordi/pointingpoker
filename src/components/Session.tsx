@@ -2,9 +2,10 @@ import { FunctionComponent } from "preact";
 import { useState } from "preact/hooks";
 import { useRoom } from "../hooks/useRoom";
 import { Button } from "./Button";
-import { Card } from "./Card";
+import { DesktopCard } from "./Card";
 import { RadioButtons } from "./RadioButtons";
 import { ReactComponent as ClipboardIcon } from "../assets/clipboard.svg";
+import { MobileCard } from "./MobileCard";
 
 interface Props {
   id: string;
@@ -38,9 +39,18 @@ export const Session: FunctionComponent<Props> = ({
       </button>
 
       <div className="flex flex-1 flex-col items-center justify-center">
-        <div className="flex items-center align-center flex-row flex-wrap">
+        <div className="hidden md:flex items-center align-center flex-row">
           {
-            users.map((u) => <Card
+            users.map((u) => <DesktopCard
+              key={u.id}
+              name={u.name}
+              points={u.picked}
+              revealed={revealed}/>)
+          }
+        </div>
+        <div className="md:hidden w-screen flex flex-col px-2 my-2">
+          {
+            users.map((u) => <MobileCard
               key={u.id}
               name={u.name}
               points={u.picked}
