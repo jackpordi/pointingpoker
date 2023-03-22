@@ -30,12 +30,15 @@ websocket.on("connection", (socket: WebSocket, req: IncomingMessage) => {
     room.handleMessage(uid, data, socket);
   });
 
-  socket.on("close", () => {
+  const onClose = () => {
     Logger.info(`User ${name} has left the room`);
     room.leave(user);
     manager.checkVacancy(room.id);
     room.broadcast();
-  });
+  };
+
+  socket.on("close", onClose);
+  socket.on("error", onClose);
 
   room.join(user);
   room.broadcast();
