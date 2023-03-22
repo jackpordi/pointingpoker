@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { IncomingMessage, OutgoingMessage } from "types";
 
+import WebSocket from "isomorphic-ws";
+
 interface ReconnectingWsOptions<O = OutgoingMessage> {
   onMessage(_: O): void;
   onOpen(): void;
@@ -26,7 +28,7 @@ export class ReconnectingWs<O = OutgoingMessage, I = IncomingMessage> {
 
     this.url = config.url;
 
-    this.oNMessageListener = this.oNMessageListener.bind(this);
+    this.onMessageListener = this.onMessageListener.bind(this);
     this.onCloseListener = this.onCloseListener.bind(this);
     this.connect();
   }
@@ -35,7 +37,7 @@ export class ReconnectingWs<O = OutgoingMessage, I = IncomingMessage> {
     this.socket = new WebSocket(this.url);
     this.socket.addEventListener("open", this.onOpen);
     this.socket.addEventListener("close", this.onCloseListener);
-    this.socket.addEventListener("message", this.oNMessageListener);
+    this.socket.addEventListener("message", this.onMessageListener);
   }
 
   public send(payload: I) {
@@ -45,7 +47,7 @@ export class ReconnectingWs<O = OutgoingMessage, I = IncomingMessage> {
   public cleanup() {
     this.socket.removeEventListener("open", this.onOpen);
     this.socket.removeEventListener("close", this.onClose);
-    this.socket.removeEventListener("message", this.oNMessageListener);
+    this.socket.removeEventListener("message", this.onMessageListener);
     this.socket.close();
   }
 
@@ -54,8 +56,16 @@ export class ReconnectingWs<O = OutgoingMessage, I = IncomingMessage> {
     setTimeout(() => this.connect(), 1000);
   }
 
-  private oNMessageListener(message: MessageEvent) {
+  private onMessageListener(message: WebSocket.MessageEvent) {
     const parsed = JSON.parse(message.data as string) as O;
     this.onMessage(parsed);
+  }
+
+  public pong() {
+    this.socket.pong();
+  }
+
+  public ping() {
+    this.socket.ping();
   }
 }

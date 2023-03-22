@@ -1,25 +1,40 @@
-import WebSocket, { RawData } from "ws";
+import { RawData } from "ws";
 import {
-  IdentifyMessage, IncomingMessage, IUser, PongMessage,
+  IdentifyMessage, IncomingMessage,
 } from "types";
 import { RoomState } from "./room-state";
+import { User } from "./user";
+
+const TEN_SECONDS = 10 * 1000;
 
 export class Room {
-  private connections: IUser[] = [];
+  private connections: User[] = [];
 
   private readonly state = new RoomState();
+
+  private timer: NodeJS.Timer;
 
   constructor(
     public readonly id: string,
   ) {
     this.join = this.join.bind(this);
+
+    this.timer = setInterval(() => {
+      this.connections.forEach((u) => {
+        if (!u.isAlive) {
+          this.leave(u);
+          u.socket.terminate();
+        }
+        u.socket.ping();
+      });
+    }, TEN_SECONDS);
   }
 
   public get occupants() {
     return this.state.size;
   }
 
-  public join(user: IUser) {
+  public join(user: User) {
     const { id, name, socket } = user;
 
     this.connections.push(user);
@@ -33,12 +48,12 @@ export class Room {
     socket.send(JSON.stringify(payload));
   }
 
-  public leave(user: IUser) {
+  public leave(user: User) {
     this.state.removeUser(user.id);
     this.connections = this.connections.filter((conn) => conn.socket !== user.socket);
   }
 
-  public handleMessage(id: string, message: RawData, socket: WebSocket) {
+  public handleMessage(id: string, message: RawData) {
     const parsed: IncomingMessage = JSON.parse(message.toString()) as IncomingMessage;
 
     if (parsed.type === "Clear") {
@@ -47,21 +62,9 @@ export class Room {
       this.handleUserChoosePoints(id, parsed.points);
     } else if (parsed.type === "Reveal") {
       this.revealChoices();
-    } else if (parsed.type === "Ping") {
-      this.pong(socket);
     }
 
-    if (parsed.type !== "Ping") {
-      this.broadcast();
-    }
-  }
-
-  public pong(socket: WebSocket) {
-    const pong: PongMessage = {
-      type: "Pong",
-    };
-
-    socket.send(JSON.stringify(pong));
+    this.broadcast();
   }
 
   public broadcast() {
@@ -94,5 +97,9 @@ export class Room {
 
   public handleUserChoosePoints(id: string, points: number | null) {
     this.state.userPicked(id, points);
+  }
+
+  public cleanup() {
+    clearInterval(this.timer);
   }
 }

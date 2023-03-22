@@ -6,7 +6,6 @@ import {
   PointsChosenMessage,
   RevealMessage,
   OutgoingMessage,
-  PingMessage,
 } from "../types";
 
 function constructWSUrl(roomId: string, name: string) {
@@ -60,14 +59,9 @@ export function useRoom(id: string, name: string) {
       url: constructWSUrl(id, name),
     });
 
-    const pingInterval = setInterval(() => {
-      const payload: PingMessage = { type: "Ping" };
-      socket.send(payload);
-    }, 5000);
-
     setWs(socket);
+
     return () => {
-      clearInterval(pingInterval);
       socket.cleanup();
     };
   }

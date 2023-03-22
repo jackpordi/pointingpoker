@@ -1,17 +1,11 @@
-import WebSocket from "ws";
+import { User } from "backend/user";
 
-type UID = string;
+export type UID = string;
 
 export interface IUserState {
   id: UID;
   name: string;
   picked: number | null | true;
-}
-
-export interface IUser {
-  id: UID;
-  socket: WebSocket;
-  name: string;
 }
 
 export type IncomingMessage =
@@ -37,7 +31,7 @@ interface WSMessage<T extends string> {
   type: T;
 }
 
-type UserState = Record<string, IUser>;
+type UserState = Record<string, User>;
 
 export interface RevealStatusMessage extends WSMessage<"Status"> {
   state: UserState;

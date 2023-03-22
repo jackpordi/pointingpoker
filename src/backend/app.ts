@@ -6,10 +6,11 @@ import { Logger } from "../logger";
 
 import { manager } from "./room-manager";
 import server from "./server";
+import { User } from "./user";
 
-const websocket = new WebSocketServer({ server, path: "/ws" });
+const wss = new WebSocketServer({ server, path: "/ws" });
 
-websocket.on("connection", (socket: WebSocket, req: IncomingMessage) => {
+wss.on("connection", (socket: WebSocket, req: IncomingMessage) => {
   const uid = randomUUID();
   const name = UrlUtils.parse(req.url!, true).query?.name as string | undefined;
 
@@ -21,13 +22,12 @@ websocket.on("connection", (socket: WebSocket, req: IncomingMessage) => {
   }
 
   const room = manager.getOrCreate(roomId.toUpperCase());
-
-  const user = { id: uid, name, socket };
+  const user = new User(uid, name, socket);
   Logger.info(`User ${name} has joined room ${roomId.toUpperCase()}`);
 
   socket.on("message", (data) => {
     Logger.info(`User ${name} has sent a message ${data.toString()}`);
-    room.handleMessage(uid, data, socket);
+    room.handleMessage(uid, data);
   });
 
   const onClose = () => {
