@@ -26,12 +26,13 @@ module.exports = {
     "import/prefer-default-export": "off",
     "no-void": "off",
     "class-methods-use-this": "off",
-      "@typescript-eslint/no-misused-promises": [
-        "error",
-        {
-          "checksVoidReturn": false
-        }
-      ]
+    "@typescript-eslint/unbound-method": "off",
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": false
+      }
+    ]
   },
   root: true,
 };

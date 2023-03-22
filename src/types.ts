@@ -14,9 +14,7 @@ export type IncomingMessage =
   | ClearMessage
   | PingMessage;
 
-export type OutgoingMessage = StateMessage | PongMessage | IdentifyMessage;
-
-export type PongMessage = WSMessage<"Pong">;
+export type OutgoingMessage = StateMessage | IdentifyMessage;
 
 export interface StateMessage extends WSMessage<"State"> {
   revealed: boolean;

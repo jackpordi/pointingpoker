@@ -25,7 +25,7 @@ export class Room {
           this.leave(u);
           u.socket.terminate();
         }
-        u.socket.ping();
+        u.ping();
       });
     }, TEN_SECONDS);
   }

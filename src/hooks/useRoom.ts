@@ -47,8 +47,6 @@ export function useRoom(id: string, name: string) {
         else (setChosen(undefined));
       } else if (payload.type === "Identify") {
         uid.current = payload.id;
-      } else if (payload.type === "Pong") {
-        // Do nothing
       }
     };
 
@@ -61,8 +59,11 @@ export function useRoom(id: string, name: string) {
 
     setWs(socket);
 
+    const timer = setInterval(() => socket.ping(), 1000);
+
     return () => {
       socket.cleanup();
+      clearInterval(timer);
     };
   }
 

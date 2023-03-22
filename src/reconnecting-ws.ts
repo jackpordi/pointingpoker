@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { IncomingMessage, OutgoingMessage } from "types";
 
 import WebSocket from "isomorphic-ws";
@@ -59,10 +58,6 @@ export class ReconnectingWs<O = OutgoingMessage, I = IncomingMessage> {
   private onMessageListener(message: WebSocket.MessageEvent) {
     const parsed = JSON.parse(message.data as string) as O;
     this.onMessage(parsed);
-  }
-
-  public pong() {
-    this.socket.pong();
   }
 
   public ping() {

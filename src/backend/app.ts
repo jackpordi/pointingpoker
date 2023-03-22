@@ -39,6 +39,7 @@ wss.on("connection", (socket: WebSocket, req: IncomingMessage) => {
 
   socket.on("close", onClose);
   socket.on("error", onClose);
+  socket.on("ping", () => socket.pong());
 
   room.join(user);
   room.broadcast();
