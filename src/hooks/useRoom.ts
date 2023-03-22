@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "preact/hooks";
+import { ReconnectingWs } from "reconnecting-ws";
 import {
   ClearMessage,
   IUserState,
@@ -17,7 +18,7 @@ function constructWSUrl(roomId: string, name: string) {
 }
 
 export function useRoom(id: string, name: string) {
-  const [ ws, setWs ] = useState<WebSocket | undefined>();
+  const [ ws, setWs ] = useState<ReconnectingWs | undefined>();
 
   const [ state, setState ] = useState<IUserState[]>([]);
   const [ revealed, setRevealed ] = useState(false);
@@ -28,8 +29,6 @@ export function useRoom(id: string, name: string) {
   const [ chosen, setChosen ] = useState<number | undefined>();
 
   function setupWS() {
-    const socket = new WebSocket(constructWSUrl(id, name));
-
     const onOpen = () => {
       setConnected(true);
     };
@@ -38,39 +37,38 @@ export function useRoom(id: string, name: string) {
       setConnected(false);
     };
 
-    const pingInterval = setInterval(() => {
-      const payload: PingMessage = { type: "Ping" };
-      socket.send(JSON.stringify(payload));
-    }, 5000);
-
-    const onMessage = (message: MessageEvent) => {
-      const parsed: OutgoingMessage = JSON.parse(message.data as string) as OutgoingMessage;
-
-      if (parsed.type === "State") {
-        setState(parsed.users);
-        setRevealed(parsed.revealed);
-        const me = parsed.users.find((u) => u.id === uid.current);
+    const onMessage = (payload: OutgoingMessage) => {
+      if (payload.type === "State") {
+        setState(payload.users);
+        setRevealed(payload.revealed);
+        const me = payload.users.find((u) => u.id === uid.current);
 
         const myPick = me?.picked;
         if (typeof myPick === "number") setChosen(myPick);
         else (setChosen(undefined));
-      } else if (parsed.type === "Identify") {
-        uid.current = parsed.id;
-      } else if (parsed.type === "Pong") {
+      } else if (payload.type === "Identify") {
+        uid.current = payload.id;
+      } else if (payload.type === "Pong") {
         // Do nothing
       }
     };
-    socket.addEventListener("open", onOpen);
-    socket.addEventListener("close", onClose);
-    socket.addEventListener("message", onMessage);
+
+    const socket = new ReconnectingWs({
+      onOpen,
+      onClose,
+      onMessage,
+      url: constructWSUrl(id, name),
+    });
+
+    const pingInterval = setInterval(() => {
+      const payload: PingMessage = { type: "Ping" };
+      socket.send(payload);
+    }, 5000);
 
     setWs(socket);
     return () => {
       clearInterval(pingInterval);
-      socket.removeEventListener("open", onOpen);
-      socket.removeEventListener("close", onClose);
-      socket.removeEventListener("message", onMessage);
-      socket.close();
+      socket.cleanup();
     };
   }
 
@@ -82,7 +80,7 @@ export function useRoom(id: string, name: string) {
       type: "PointsChosen",
       points: n,
     };
-    ws.send(JSON.stringify(payload));
+    ws.send(payload);
   };
 
   const reveal = () => {
@@ -90,7 +88,7 @@ export function useRoom(id: string, name: string) {
     const payload: RevealMessage = {
       type: "Reveal",
     };
-    ws.send(JSON.stringify(payload));
+    ws.send(payload);
   };
 
   const clear = () => {
@@ -98,7 +96,7 @@ export function useRoom(id: string, name: string) {
     const payload: ClearMessage = {
       type: "Clear",
     };
-    ws.send(JSON.stringify(payload));
+    ws.send(payload);
   };
 
   return {
