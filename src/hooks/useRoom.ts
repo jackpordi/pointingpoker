@@ -8,15 +8,29 @@ import {
   OutgoingMessage,
 } from "../types";
 
-function constructWSUrl(roomId: string, name: string) {
+function constructWSUrl(
+  roomId: string,
+  name: string,
+  observing: boolean,
+) {
   const protocol = window.location.protocol === "https:"
     ? "wss"
     : "ws";
 
-  return `${protocol}://${window.location.host}/ws?name=${name}&room=${roomId}`;
+  const query = new URLSearchParams({
+    room: roomId,
+    name,
+    observing: observing.toString(),
+  });
+
+  return `${protocol}://${window.location.host}/ws?${query.toString()}`;
 }
 
-export function useRoom(id: string, name: string) {
+export function useRoom(
+  id: string,
+  name: string,
+  observing: boolean,
+) {
   const [ ws, setWs ] = useState<ReconnectingWs | undefined>();
 
   const [ state, setState ] = useState<IUserState[]>([]);
@@ -54,16 +68,13 @@ export function useRoom(id: string, name: string) {
       onOpen,
       onClose,
       onMessage,
-      url: constructWSUrl(id, name),
+      url: constructWSUrl(id, name, observing),
     });
 
     setWs(socket);
 
-    const timer = setInterval(() => socket.ping(), 1000);
-
     return () => {
       socket.cleanup();
-      clearInterval(timer);
     };
   }
 

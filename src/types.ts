@@ -23,6 +23,9 @@ export interface StateMessage extends WSMessage<"State"> {
     name: string;
     picked: true | null | number;
   }[];
+  observers: {
+    name: string;
+  }[];
 }
 
 interface WSMessage<T extends string> {

@@ -10,6 +10,7 @@ import { MobileCard } from "./MobileCard";
 interface Props {
   id: string;
   name: string;
+  observing: boolean;
 }
 
 const choices = [ 0, 1, 2, 3, 5, 8, 20, 40 ];
@@ -17,10 +18,16 @@ const choices = [ 0, 1, 2, 3, 5, 8, 20, 40 ];
 export const Session: FunctionComponent<Props> = ({
   id,
   name,
+  observing,
 }) => {
   const {
-    users, pick, reveal, clear, revealed, chosen,
-  } = useRoom(id, name);
+    users,
+    pick,
+    reveal,
+    clear,
+    revealed,
+    chosen,
+  } = useRoom(id, name, observing);
 
   const [ linkCopied, setLinkCopied ] = useState(false);
 
@@ -57,12 +64,14 @@ export const Session: FunctionComponent<Props> = ({
               revealed={revealed}/>)
           }
         </div>
-        <RadioButtons
-          chosen={chosen}
-          choices={choices}
-          revealed={revealed}
-          onClick={pick}
-        />
+        { !observing && (
+          <RadioButtons
+            chosen={chosen}
+            choices={choices}
+            revealed={revealed}
+            onClick={pick}
+          />
+        )}
         <div className="flex flex-row py-2">
           <Button class="mx-2" onClick={clear} text="Clear" />
           <Button class="mx-2" onClick={reveal} text="Reveal" />

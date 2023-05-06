@@ -35,6 +35,6 @@ export class RoomState {
       type: "State",
       revealed: this.revealed,
       users: this.users,
-    };
+    } as const;
   }
 }

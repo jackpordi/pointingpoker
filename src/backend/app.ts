@@ -13,8 +13,8 @@ const wss = new WebSocketServer({ server, path: "/ws" });
 wss.on("connection", (socket: WebSocket, req: IncomingMessage) => {
   const uid = randomUUID();
   const name = UrlUtils.parse(req.url!, true).query?.name as string | undefined;
-
   const roomId = UrlUtils.parse(req.url!, true).query?.room as string | undefined;
+  const observing = UrlUtils.parse(req.url!, true).query?.observing as string | undefined;
 
   if (!name || !roomId) {
     socket.close();
@@ -23,7 +23,6 @@ wss.on("connection", (socket: WebSocket, req: IncomingMessage) => {
 
   const room = manager.getOrCreate(roomId.toUpperCase());
   const user = new User(uid, name, socket);
-  Logger.info(`User ${name} has joined room ${roomId.toUpperCase()}`);
 
   socket.on("message", (data) => {
     Logger.info(`User ${name} has sent a message ${data.toString()}`);
@@ -41,7 +40,14 @@ wss.on("connection", (socket: WebSocket, req: IncomingMessage) => {
   socket.on("error", onClose);
   socket.on("ping", () => socket.pong());
 
-  room.join(user);
+  if (observing !== "true") {
+    room.join(user);
+    Logger.info(`Player ${name} has joined room ${roomId.toUpperCase()}`);
+  } else {
+    room.observe(user);
+    Logger.info(`Observer ${name} has joined room ${roomId.toUpperCase()}`);
+  }
+
   room.broadcast();
 });
 

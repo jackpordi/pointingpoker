@@ -21,7 +21,6 @@ export class ReconnectingWs<O = OutgoingMessage, I = IncomingMessage> {
   private socket!: WebSocket;
 
   constructor(config: ReconnectingWsOptions<O>) {
-    this.ping = this.ping.bind(this);
     this.onMessage = (o) => config.onMessage(o);
     this.onClose = () => config.onClose();
     this.onOpen = () => config.onOpen();
@@ -59,9 +58,5 @@ export class ReconnectingWs<O = OutgoingMessage, I = IncomingMessage> {
   private onMessageListener(message: WebSocket.MessageEvent) {
     const parsed = JSON.parse(message.data as string) as O;
     this.onMessage(parsed);
-  }
-
-  public ping() {
-    this.socket.ping();
   }
 }

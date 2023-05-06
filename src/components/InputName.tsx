@@ -4,12 +4,16 @@ import { Button } from "./Button";
 import { Input } from "./Input";
 
 interface Props {
-  setName(s: string): void;
+  join(name: string, observing: boolean): void;
 }
+
 export const InputName: FunctionComponent<Props> = ({
-  setName,
+  join,
 }) => {
   const [ value, onChange ] = useState("");
+
+  const disabled = value.length === 0;
+
   return (
     <>
       <h1 className="text-4xl font-bold my-4">
@@ -25,7 +29,17 @@ export const InputName: FunctionComponent<Props> = ({
           onChange={onChange}
         />
         <div className="ml-1 md:ml-2">
-        <Button onClick={() => setName(value)} text="Join"/>
+        <Button
+          class="mr-2"
+          disabled={disabled}
+          onClick={() => join(value, false)}
+          text="Play"
+        />
+        <Button
+          disabled={disabled}
+          onClick={() => join(value, true)}
+          text="Observe"
+        />
         </div>
       </div>
     </>
