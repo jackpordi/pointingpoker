@@ -6,6 +6,7 @@ import {
   PointsChosenMessage,
   RevealMessage,
   OutgoingMessage,
+  IObserver,
 } from "../types";
 
 function constructWSUrl(
@@ -34,6 +35,8 @@ export function useRoom(
   const [ ws, setWs ] = useState<ReconnectingWs | undefined>();
 
   const [ state, setState ] = useState<IUserState[]>([]);
+  const [ observers, setObservers ] = useState<IObserver[]>([]);
+
   const [ revealed, setRevealed ] = useState(false);
 
   const [ connected, setConnected ] = useState(false);
@@ -54,6 +57,7 @@ export function useRoom(
       if (payload.type === "State") {
         setState(payload.users);
         setRevealed(payload.revealed);
+        setObservers(payload.observers);
         const me = payload.users.find((u) => u.id === uid.current);
 
         const myPick = me?.picked;
@@ -113,5 +117,6 @@ export function useRoom(
     chosen,
     reveal,
     clear,
+    observers,
   } as const;
 }

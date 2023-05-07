@@ -5,7 +5,9 @@ import { Button } from "./Button";
 import { DesktopCard } from "./Card";
 import { RadioButtons } from "./RadioButtons";
 import { ReactComponent as ClipboardIcon } from "../assets/clipboard.svg";
+import { ReactComponent as ObserveIcon } from "../assets/observe.svg";
 import { MobileCard } from "./MobileCard";
+import { Observers } from "./Observers";
 
 interface Props {
   id: string;
@@ -27,6 +29,7 @@ export const Session: FunctionComponent<Props> = ({
     clear,
     revealed,
     chosen,
+    observers,
   } = useRoom(id, name, observing);
 
   const [ linkCopied, setLinkCopied ] = useState(false);
@@ -46,6 +49,18 @@ export const Session: FunctionComponent<Props> = ({
       </button>
 
       <div className="flex flex-1 flex-col items-center justify-center">
+        { users.length === 0 && (
+        <div className="py-2 flex flex-col items-center">
+            <h1 className="text-xl font-bold">
+              No players are in the room
+            </h1>
+            <p>
+              Invite players or re-join as a player
+            </p>
+          </div>
+        )}
+        { !!users.length && (
+          <>
         <div className="hidden md:flex items-center align-center flex-row">
           {
             users.map((u) => <DesktopCard
@@ -64,6 +79,8 @@ export const Session: FunctionComponent<Props> = ({
               revealed={revealed}/>)
           }
         </div>
+        </>
+        )}
         { !observing && (
           <RadioButtons
             chosen={chosen}
@@ -76,6 +93,7 @@ export const Session: FunctionComponent<Props> = ({
           <Button class="mx-2" onClick={clear} text="Clear" />
           <Button class="mx-2" onClick={reveal} text="Reveal" />
         </div>
+        <Observers observers={observers} />
       </div>
     </div>
   );

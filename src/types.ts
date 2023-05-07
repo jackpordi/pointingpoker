@@ -8,6 +8,10 @@ export interface IUserState {
   picked: number | null | true;
 }
 
+export interface IObserver {
+  name: string;
+}
+
 export type IncomingMessage =
   | PointsChosenMessage
   | RevealMessage
