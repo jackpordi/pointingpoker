@@ -19,4 +19,10 @@ export default defineConfig({
     }
   },
   plugins: [ tsconfigPaths(), preact(), svgr() ],
+  resolve: {
+    alias: {
+      react: 'preact/compat',
+      'react-dom': 'preact/compat'
+    }
+  }
 })

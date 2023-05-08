@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "preact/hooks";
+import {
+  useEffect, useMemo, useRef, useState,
+} from "preact/hooks";
 import { ReconnectingWs } from "reconnecting-ws";
 import {
   ClearMessage,
@@ -109,6 +111,15 @@ export function useRoom(
     ws.send(payload);
   };
 
+  const consensus = useMemo(() => {
+    if (!revealed || state.length <= 1) return false;
+
+    const picks = state.map((u) => u.picked);
+
+    const allEqual = picks.every((p) => p === picks[0]) && typeof picks[0] === "number";
+    return allEqual;
+  }, [ state ]);
+
   return {
     revealed,
     connected,
@@ -118,5 +129,6 @@ export function useRoom(
     reveal,
     clear,
     observers,
+    consensus,
   } as const;
 }

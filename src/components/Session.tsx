@@ -5,9 +5,9 @@ import { Button } from "./Button";
 import { DesktopCard } from "./Card";
 import { RadioButtons } from "./RadioButtons";
 import { ReactComponent as ClipboardIcon } from "../assets/clipboard.svg";
-import { ReactComponent as ObserveIcon } from "../assets/observe.svg";
 import { MobileCard } from "./MobileCard";
 import { Observers } from "./Observers";
+import { Confetti } from "./Confetti";
 
 interface Props {
   id: string;
@@ -30,6 +30,7 @@ export const Session: FunctionComponent<Props> = ({
     revealed,
     chosen,
     observers,
+    consensus,
   } = useRoom(id, name, observing);
 
   const [ linkCopied, setLinkCopied ] = useState(false);
@@ -42,7 +43,9 @@ export const Session: FunctionComponent<Props> = ({
 
   return (
     <div className="flex flex-col items-center min-h-screen">
-
+      <Confetti
+        active={consensus}
+        />
       <button onClick={copyLink} className="my-2 text-blue-500 hover:underline flex flex-row items-center">
         <ClipboardIcon className="w-4 h-4 mr-1" />
         { linkCopied ? "Link copied!" : "Copy Invite Link"}
