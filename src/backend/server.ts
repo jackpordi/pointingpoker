@@ -9,7 +9,24 @@ import { manager } from "./room-manager";
 
 const app = express();
 app.use(morgan("common"));
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        "image-src": [
+          "www.googletagmanager.com",
+        ],
+        "script-src": [
+          "'self'",
+          "'unsafe-inline'",
+          "https://www.googletagmanager.com",
+        ],
+      },
+    },
+  }),
+);
 
 app.use(express.static("dist"));
 
