@@ -6,6 +6,7 @@ export const Helmet = helmet({
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
       "img-src": [
+        "'self'",
         "https://*.googletagmanager.com",
         "https://*.google-analytics.com",
         "https://*.analytics.google.com",
@@ -13,6 +14,7 @@ export const Helmet = helmet({
         "https://*.google.com",
       ],
       "connect-src": [
+        "'self'",
         "https://*.googletagmanager.com",
         "https://*.google-analytics.com",
         "https://*.analytics.google.com",
