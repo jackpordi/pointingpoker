@@ -3,35 +3,13 @@ import express from "express";
 import path from "path";
 import morgan from "morgan";
 
-import helmet from "helmet";
 import { generateRoomId } from "./utils";
 import { manager } from "./room-manager";
+import { Helmet } from "./headers";
 
 const app = express();
 app.use(morgan("common"));
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      useDefaults: true,
-      directives: {
-        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        "image-src": [
-          "https://*.googletagmanager.com",
-          "https://*.google-analytics.com",
-        ],
-        "connect-src": [
-          "https://*.googletagmanager.com",
-          "https://*.google-analytics.com",
-          "https://*.analytics.google.com",
-        ],
-        "script-src": [
-          "'self'",
-          "https://*.googletagmanager.com",
-        ],
-      },
-    },
-  }),
-);
+app.use(Helmet);
 
 app.use(express.static("dist"));
 
