@@ -16,12 +16,17 @@ app.use(
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
         "image-src": [
-          "www.googletagmanager.com",
+          "https://*.googletagmanager.com",
+          "https://*.google-analytics.com",
+        ],
+        "connect-src": [
+          "https://*.googletagmanager.com",
+          "https://*.google-analytics.com",
+          "https://*.analytics.google.com",
         ],
         "script-src": [
           "'self'",
-          "'unsafe-inline'",
-          "https://www.googletagmanager.com",
+          "https://*.googletagmanager.com",
         ],
       },
     },
