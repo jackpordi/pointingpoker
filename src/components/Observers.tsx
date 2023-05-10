@@ -40,7 +40,7 @@ export const Observers: FunctionComponent<Props> = ({
             </div>
           ))}
           <Button
-            class="mt-4"
+            class="mt-4 py-3 px-6"
             text="Done"
             onClick={() => setShow(false)}
           />

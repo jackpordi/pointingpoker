@@ -1,8 +1,7 @@
 import { useState } from "preact/hooks";
-import { Input } from "components/Input";
-import { Button } from "components/Button";
 import Axios from "axios";
 import { route } from "preact-router";
+import { InputWithButton } from "components/InputWithButton";
 
 export function Home() {
   const [ roomCode, setRoomCode ] = useState("");
@@ -23,13 +22,12 @@ export function Home() {
     <div className="w-full min-h-screen px-3">
       <div className="flex flex-col items-center justify-center mx-auto max-w-4xl w-full min-h-screen">
 
-        <h1 className="text-5xl font-bold my-4">
+        <h1 className="text-7xl font-lobster my-4">
           Pointing Poker
         </h1>
 
-      <div className="flex flex-col items-center w-full md:w-[320px]">
-
-            <Input
+      <div className="flex flex-col items-center w-full md:w-[320px] my-4">
+            <InputWithButton
               id="room-code"
               label={"Room code"}
               hideLabel
@@ -37,23 +35,15 @@ export function Home() {
               onChange={(s) => setRoomCode(s.toUpperCase())}
               placeholder="Enter your room code"
               containerClassName="w-full"
-              inputClassName="text-center text-lg"
-            />
-            <Button
-              disabled={enterRoomDisabled}
-              class="mt-2 w-full"
-              text="Enter room"
+              inputClassName="text-center text-xl font-bold placeholder:font-normal"
               onClick={enterRoom}
+              canContinue={!enterRoomDisabled}
             />
-
-          <p className="text-gray-500 my-2 text-sm">
-            or
+          <p className="text-gray-400 my-6 text-md">
+            <button className="hover:text-gray-600 transition-all hover:underline" onClick={() => void goToNewRoom()}>
+              ...or create a new room
+            </button>
           </p>
-          <Button
-            class="w-full"
-            text="Create a new room"
-            onClick={() => void goToNewRoom()}
-          />
         </div>
 
       </div>

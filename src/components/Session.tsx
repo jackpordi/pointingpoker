@@ -15,7 +15,7 @@ interface Props {
   observing: boolean;
 }
 
-const choices = [ 0, 1, 2, 3, 5, 8, 20, 40 ];
+const choices = [ 0, 1, 2, 3, 5, 8, 13, 20 ];
 
 export const Session: FunctionComponent<Props> = ({
   id,
@@ -93,8 +93,8 @@ export const Session: FunctionComponent<Props> = ({
           />
         )}
         <div className="flex flex-row py-2">
-          <Button class="mx-2" onClick={clear} text="Clear" />
-          <Button class="mx-2" onClick={reveal} text="Reveal" />
+          <Button class="mx-2 px-6 py-3" onClick={clear} text="Clear" />
+          <Button class="mx-2 px-6 py-3" onClick={reveal} text="Reveal" />
         </div>
         <Observers observers={observers} />
       </div>

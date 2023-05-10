@@ -1,7 +1,7 @@
 import { FunctionComponent } from "preact";
 import { useState } from "preact/hooks";
 import { Button } from "./Button";
-import { Input } from "./Input";
+import { InputWithButton } from "./InputWithButton";
 
 interface Props {
   join(name: string, observing: boolean): void;
@@ -16,31 +16,33 @@ export const InputName: FunctionComponent<Props> = ({
 
   return (
     <>
-      <h1 className="text-4xl font-bold my-4">
+      <h1 className="hidden text-4xl font-bold my-4">
         { "What's your name?" }
       </h1>
       <div className="flex flex-row items-center">
-        <Input
+        <InputWithButton
           label="name"
           hideLabel
           id="name"
-          placeholder="Your name"
+          placeholder="What's your name?"
+          inputClassName="text-center text-xl font-bold placeholder:font-normal"
           value={value}
           onChange={onChange}
         />
-        <div className="ml-1 md:ml-2">
+      </div>
+      <div className="flex flex-row my-4 items-center justify-center">
         <Button
-          class="mr-2"
-          disabled={disabled}
-          onClick={() => join(value, false)}
-          text="Play"
-        />
-        <Button
+          class="px-4 mr-2 py-3"
           disabled={disabled}
           onClick={() => join(value, true)}
           text="Observe"
         />
-        </div>
+        <Button
+          onClick={() => join(value, false)}
+          disabled={disabled}
+          text="Play"
+          class="px-8 py-3"
+        />
       </div>
     </>
   );
