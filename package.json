@@ -1,5 +1,6 @@
 {
   "name": "pointing-poker",
+  "license": "MIT",
   "version": "1.0.0",
   "scripts": {
     "lint": "yarn eslint './**/*.{ts,tsx}'",
