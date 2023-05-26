@@ -24,8 +24,9 @@ class RoomManager {
 
     if (!room) return;
 
-    if (room) {
-      if (room.occupants === 0) this.rooms.delete(id);
+    if (room && room.occupants === 0) {
+      room.cleanup();
+      this.rooms.delete(id);
     }
   }
 }
