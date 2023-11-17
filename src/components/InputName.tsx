@@ -5,20 +5,27 @@ import { InputWithButton } from "./InputWithButton";
 
 interface Props {
   join(name: string, observing: boolean): void;
+  initialName?: string;
+  roomName: string;
 }
 
 export const InputName: FunctionComponent<Props> = ({
   join,
+  roomName,
+  initialName = "",
 }) => {
-  const [ value, onChange ] = useState("");
+  const [ value, onChange ] = useState(initialName);
 
   const disabled = value.length === 0;
 
   return (
     <>
-      <h1 className="hidden text-4xl font-bold my-4">
-        { "What's your name?" }
+      <h1 className="text-2xl text-gray-600 font-bold">
+        Room: { roomName.toUpperCase() }
       </h1>
+      <h2 className="text-md text-gray-400 my-4">
+        { "What's your name?" }
+      </h2>
       <div className="flex flex-row items-center">
         <InputWithButton
           label="name"

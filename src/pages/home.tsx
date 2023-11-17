@@ -1,7 +1,8 @@
-import { useState } from "preact/hooks";
+import { useCallback, useState } from "preact/hooks";
 import Axios from "axios";
 import { route } from "preact-router";
 import { InputWithButton } from "components/InputWithButton";
+import { useLastRoom } from "hooks/useLastRoom";
 
 export function Home() {
   const [ roomCode, setRoomCode ] = useState("");
@@ -17,6 +18,12 @@ export function Home() {
   const enterRoom = () => {
     route(`/${roomCode.toLowerCase()}`);
   };
+
+  const { lastRoom } = useLastRoom();
+
+  const goToLastRoom = useCallback(() => {
+    if (lastRoom) route(`/${lastRoom[0]}`);
+  }, [ lastRoom ]);
 
   return (
     <div className="w-full min-h-screen px-3">
@@ -39,10 +46,15 @@ export function Home() {
               onClick={enterRoom}
               canContinue={!enterRoomDisabled}
             />
-          <p className="text-gray-400 my-6 text-md">
+          <p className="text-gray-400 my-6 text-md flex items-center justify-center flex-col">
             <button className="hover:text-gray-600 transition-all hover:underline" onClick={() => void goToNewRoom()}>
-              ...or create a new room
+              Create a new room
             </button>
+            { lastRoom !== undefined && (
+              <button className="mt-4 hover:text-gray-600 transition-all hover:underline" onClick={() => void goToLastRoom()}>
+                ...or go to your last room
+              </button>
+            )}
           </p>
         </div>
 
