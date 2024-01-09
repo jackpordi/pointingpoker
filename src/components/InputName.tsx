@@ -35,6 +35,9 @@ export const InputName: FunctionComponent<Props> = ({
           inputClassName="text-center text-xl font-bold placeholder:font-normal"
           value={value}
           onChange={onChange}
+          onClick={() => join(value, false)}
+          hideButton
+          canContinue={!disabled}
         />
       </div>
       <div className="flex flex-row my-4 items-center justify-center">

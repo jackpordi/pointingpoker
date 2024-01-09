@@ -1,5 +1,7 @@
 import clsx from "clsx";
 import { FunctionComponent } from "preact";
+import { JSXInternal } from "preact/src/jsx";
+import { useCallback } from "preact/hooks";
 import { ReactComponent as NextButton } from "../assets/arrow-right.svg";
 
 interface Props {
@@ -9,6 +11,7 @@ interface Props {
   value?: string;
   onChange(s: string): void;
   hideLabel?: boolean;
+  hideButton?: boolean;
   containerClassName?: string;
   inputClassName?: string;
   onClick?: () => void;
@@ -37,42 +40,53 @@ export const InputWithButton: FunctionComponent<Props> = ({
   containerClassName,
   inputClassName,
   hideLabel = false,
+  hideButton = false,
   onClick,
   canContinue,
-}) => (
-    <div
-      className={containerClassName}
-    >
-      <label
-        htmlFor={id}
-        className={clsx("text-sm font-medium text-gray-900", hideLabel && "hidden")}
-      >
-        { label }
-      </label>
-      <div
-        className={style}
-      >
-        <input
-          autoCapitalize="on"
-          className={clsx(inputClassName, "outline-none")}
-          id={id}
-          type="text"
-          value={value}
-          placeholder={placeholder}
-          onInput={(e) => onChange((e.target as HTMLInputElement).value)}
-        />
-        { onClick && (
+}) => {
+  const onSubmit: JSXInternal.GenericEventHandler<HTMLFormElement> = useCallback((e) => {
+    e.preventDefault();
+    if (onClick && canContinue) {
+      onClick();
+    }
+  }, [ onClick, canContinue ]);
 
-        <button
-          disabled={!canContinue}
-          className={clsx(buttonStyle, canContinue ? "text-black" : "text-gray-400")}
-          onClick={onClick}
+  return (
+      <form
+          className={containerClassName}
+          onSubmit={onSubmit}
+      >
+        <label
+            htmlFor={id}
+            className={clsx("text-sm font-medium text-gray-900", hideLabel && "hidden")}
         >
-          <NextButton
-            className="w-6 h-6"
+          {label}
+        </label>
+        <div
+            className={style}
+        >
+          <input
+              autoCapitalize="on"
+              className={clsx(inputClassName, "outline-none")}
+              id={id}
+              type="text"
+              value={value}
+              placeholder={placeholder}
+              onInput={(e) => onChange((e.target as HTMLInputElement).value)}
           />
-        </button>
-        )}
-      </div>
-    </div>
-);
+          {onClick && (
+
+              <button
+                  type="submit"
+                  disabled={!canContinue}
+                  className={clsx(buttonStyle, canContinue ? "text-black" : "text-gray-400", hideButton && "hidden")}
+              >
+                <NextButton
+                    className="w-6 h-6"
+                />
+              </button>
+          )}
+        </div>
+      </form>
+  );
+};
