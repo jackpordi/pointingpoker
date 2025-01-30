@@ -21,6 +21,8 @@ export class Room {
   ) {
     this.join = this.join.bind(this);
 
+    this.checkUserAlive = this.checkUserAlive.bind(this);
+
     this.timer = setInterval(() => {
       this.players.forEach(this.checkUserAlive);
       this.observers.forEach(this.checkUserAlive);
