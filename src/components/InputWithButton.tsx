@@ -1,8 +1,8 @@
-import clsx from "clsx";
-import { FunctionComponent } from "preact";
-import { JSXInternal } from "preact/src/jsx";
-import { useCallback } from "preact/hooks";
-import { ReactComponent as NextButton } from "../assets/arrow-right.svg";
+import React, { useCallback } from "react";
+import { Input as ShadcnInput } from "./ui/input";
+import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
 
 interface Props {
   id: string;
@@ -18,20 +18,7 @@ interface Props {
   canContinue?: boolean;
 }
 
-const style = clsx(
-  "flex flex-row items-center justify-center",
-  "text-gray-900 text-sm",
-  "focus:border-black outline-none hover:border-black border-b-2 border-gray-400",
-  "p-2.5 w-full relative",
-  "transition-all duration-300",
-);
-
-const buttonStyle = clsx(
-  "absolute",
-  "top-0 bottom-0 right-4",
-);
-
-export const InputWithButton: FunctionComponent<Props> = ({
+export const InputWithButton: React.FC<Props> = ({
   id,
   label,
   placeholder,
@@ -44,49 +31,45 @@ export const InputWithButton: FunctionComponent<Props> = ({
   onClick,
   canContinue,
 }) => {
-  const onSubmit: JSXInternal.GenericEventHandler<HTMLFormElement> = useCallback((e) => {
+  const onSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (onClick && canContinue) {
       onClick();
     }
-  }, [ onClick, canContinue ]);
+  }, [onClick, canContinue]);
 
   return (
-      <form
-          className={containerClassName}
-          onSubmit={onSubmit}
-      >
-        <label
-            htmlFor={id}
-            className={clsx("text-sm font-medium text-gray-900", hideLabel && "hidden")}
-        >
+    <form className={cn("w-full space-y-2", containerClassName)} onSubmit={onSubmit}>
+      {!hideLabel && (
+        <label htmlFor={id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
           {label}
         </label>
-        <div
-            className={style}
-        >
-          <input
-              autoCapitalize="on"
-              className={clsx(inputClassName, "outline-none")}
-              id={id}
-              type="text"
-              value={value}
-              placeholder={placeholder}
-              onInput={(e) => onChange((e.target as HTMLInputElement).value)}
-          />
-          {onClick && (
-
-              <button
-                  type="submit"
-                  disabled={!canContinue}
-                  className={clsx(buttonStyle, canContinue ? "text-black" : "text-gray-400", hideButton && "hidden")}
-              >
-                <NextButton
-                    className="w-6 h-6"
-                />
-              </button>
-          )}
-        </div>
-      </form>
+      )}
+      <div className="relative flex items-center">
+        <ShadcnInput
+          autoCapitalize="on"
+          className={cn(inputClassName)}
+          id={id}
+          type="text"
+          value={value}
+          placeholder={placeholder}
+          onChange={(e) => onChange(e.target.value)}
+        />
+        {onClick && !hideButton && (
+          <Button
+            type="submit"
+            size="icon"
+            variant="ghost"
+            disabled={!canContinue}
+            className={cn(
+              "absolute right-1",
+              !canContinue && "opacity-50"
+            )}
+          >
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+    </form>
   );
 };

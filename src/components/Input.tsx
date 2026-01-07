@@ -1,5 +1,6 @@
-import clsx from "clsx";
-import { FunctionComponent } from "preact";
+import React from "react";
+import { Input as ShadcnInput } from "./ui/input";
+import { cn } from "@/lib/utils";
 
 interface Props {
   id: string;
@@ -12,9 +13,7 @@ interface Props {
   inputClassName?: string;
 }
 
-const style = "box-border border-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none block w-full p-2.5 hover:border-indigo-400 transition-all duration-300";
-
-export const Input: FunctionComponent<Props> = ({
+export const Input: React.FC<Props> = ({
   id,
   label,
   placeholder,
@@ -24,22 +23,19 @@ export const Input: FunctionComponent<Props> = ({
   inputClassName,
   hideLabel = false,
 }) => (
-    <div
-      className={containerClassName}
-    >
-      <label
-        htmlFor={id}
-        className={clsx("text-sm font-medium text-gray-900", hideLabel && "hidden")}
-      >
-        { label }
+  <div className={cn("space-y-2", containerClassName)}>
+    {!hideLabel && (
+      <label htmlFor={id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+        {label}
       </label>
-      <input
-        className={clsx(style, inputClassName)}
-        id={id}
-        type="text"
-        value={value}
-        placeholder={placeholder}
-        onInput={(e) => onChange((e.target as HTMLInputElement).value)}
-      />
-    </div>
+    )}
+    <ShadcnInput
+      className={inputClassName}
+      id={id}
+      type="text"
+      value={value}
+      placeholder={placeholder}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  </div>
 );

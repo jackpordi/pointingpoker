@@ -14,7 +14,7 @@ export class Room {
 
   private readonly state = new RoomState();
 
-  private timer: NodeJS.Timer;
+  private timer: NodeJS.Timeout;
 
   constructor(
     public readonly id: string,
@@ -44,6 +44,11 @@ export class Room {
   public join(user: User) {
     const { id, name, socket } = user;
 
+    // Prevent duplicate users
+    if (this.players.some((p) => p.id === id)) {
+      return;
+    }
+
     this.players.push(user);
     this.state.addUser(id, name);
 
@@ -57,6 +62,11 @@ export class Room {
 
   public observe(user: User) {
     const { id, socket } = user;
+
+    // Prevent duplicate observers
+    if (this.observers.some((o) => o.id === id)) {
+      return;
+    }
 
     this.observers.push(user);
 
