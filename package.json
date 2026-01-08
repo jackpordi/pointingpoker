@@ -4,65 +4,42 @@
   "version": "1.0.0",
   "scripts": {
     "lint": "oxlint --deny-warnings './src/**/*.{ts,tsx}'",
-    "dev:backend": "yarn nodemon",
+    "dev:backend": "cd backend && cargo run",
     "dev:frontend": "yarn vite dev",
-    "build": "yarn tsc && yarn vite build",
-    "prod": "node out/backend/app.js"
+    "build": "cd backend && cargo test --bin pointing-poker-backend types::messages::tests::test_type_generation && yarn tsc && yarn vite build && cd backend && cargo build --release",
+    "build:backend": "cd backend && cargo build --release",
+    "build:types": "cd backend && cargo test --bin pointing-poker-backend types::messages::tests::test_type_generation",
+    "prod": "cd backend && cargo run --release"
   },
   "dependencies": {
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "express": "^4.21.2",
-    "helmet": "^8.0.0",
     "isomorphic-ws": "^5.0.0",
     "lucide-react": "^0.468.0",
-    "morgan": "^1.10.0",
     "@radix-ui/react-radio-group": "^1.2.1",
     "@radix-ui/react-dialog": "^1.1.2",
-    "pino": "^9.6.0",
-    "pino-pretty": "^13.0.0",
     "react": "^19.2.3",
     "react-confetti": "^6.1.0",
     "react-dom": "^19.2.3",
     "react-router-dom": "^7.1.3",
     "tailwind-merge": "^2.6.0",
-    "typescript": "^5.7.2",
-    "ws": "^8.18.0"
+    "typescript": "^5.7.2"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/morgan": "^1.9.9",
     "@types/node": "^22.10.5",
     "@types/react": "^19.0.6",
     "@types/react-dom": "^19.0.2",
-    "@types/ws": "^8.5.13",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "oxlint": "^0.15.0",
     "install": "^0.13.0",
-    "nodemon": "^3.1.9",
     "npm": "^10.9.2",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
     "vite": "^6.0.7",
     "vite-plugin-svgr": "^4.3.0",
     "vite-tsconfig-paths": "^4.3.2"
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "**/*.test.ts",
-      "**/*.spec.ts",
-      ".git",
-      "node_modules"
-    ],
-    "watch": [
-      "src"
-    ],
-    "exec": "node -r tsconfig-paths/register -r ts-node/register ./src/backend/app.ts",
-    "ext": "ts, js"
   }
 }

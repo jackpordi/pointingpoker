@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IObserver } from "types";
+import { Observer } from "types-generated";
 import { Eye } from "lucide-react";
 import { Button } from "./ui/button";
 import {
@@ -13,7 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 
 interface Props {
-  observers: IObserver[];
+  observers: Observer[];
 }
 
 export const Observers: React.FC<Props> = ({ observers }) => {

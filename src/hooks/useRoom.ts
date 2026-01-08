@@ -4,12 +4,12 @@ import {
 import { ReconnectingWs } from "reconnecting-ws";
 import {
   ClearMessage,
-  IUserState,
+  UserState,
   PointsChosenMessage,
   RevealMessage,
   OutgoingMessage,
-  IObserver,
-} from "../types";
+  Observer,
+} from "../types-generated";
 
 function constructWSUrl(
   roomId: string,
@@ -36,8 +36,8 @@ export function useRoom(
 ) {
   const [ ws, setWs ] = useState<ReconnectingWs | undefined>();
 
-  const [ state, setState ] = useState<IUserState[]>([]);
-  const [ observers, setObservers ] = useState<IObserver[]>([]);
+  const [ state, setState ] = useState<UserState[]>([]);
+  const [ observers, setObservers ] = useState<Observer[]>([]);
 
   const [ revealed, setRevealed ] = useState(false);
 

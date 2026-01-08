@@ -1,4 +1,4 @@
-import { IncomingMessage, OutgoingMessage } from "types";
+import { IncomingMessage, OutgoingMessage } from "types-generated";
 
 import WebSocket from "isomorphic-ws";
 
