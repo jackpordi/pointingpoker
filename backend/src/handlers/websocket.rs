@@ -1,17 +1,19 @@
 use axum::{
     extract::{
         ws::{Message, WebSocket, WebSocketUpgrade},
-        Query,
+        Query, State,
     },
     response::Response,
 };
+use futures_util::{SinkExt, StreamExt};
 use serde::Deserialize;
 use std::sync::Arc;
 use tokio::sync::mpsc;
-use tracing::{info, warn, debug};
+use tracing::{debug, info, warn};
 use uuid::Uuid;
 
-use crate::room::room_manager::MANAGER;
+use crate::room::room_manager::RoomManager;
+use crate::server::AppState;
 use crate::types::messages::IncomingMessage;
 use crate::user::user::User;
 
@@ -25,6 +27,7 @@ pub struct WsQuery {
 pub async fn websocket_handler(
     ws: WebSocketUpgrade,
     Query(params): Query<WsQuery>,
+    State(state): State<AppState>,
 ) -> Response {
     let name = match params.name {
         Some(n) => n,
@@ -48,28 +51,37 @@ pub async fn websocket_handler(
         }
     };
 
-    let observing = params.observing.as_deref() == Some("true");
+    let observing = match params.observing.as_deref() {
+        Some("true") => true,
+        _ => false,
+    };
+    let room_manager = state.room_manager.clone();
 
-    ws.on_upgrade(move |socket| handle_socket(socket, name, room_id, observing))
+    ws.on_upgrade(move |socket| handle_socket(socket, name, room_id, observing, room_manager))
 }
 
-use futures_util::{SinkExt, StreamExt};
-
-async fn handle_socket(socket: WebSocket, name: String, room_id: String, observing: bool) {
+async fn handle_socket(
+    socket: WebSocket,
+    name: String,
+    room_id: String,
+    observing: bool,
+    room_manager: Arc<RoomManager>,
+) {
     let (sender, mut receiver) = socket.split();
     let (tx, mut rx) = mpsc::unbounded_channel();
 
     let user_id = Uuid::new_v4().to_string();
-    let user = Arc::new(User::new(user_id.clone(), name.clone(), tx));
+    let user_name = name.clone();
+    let user = Arc::new(User::new(user_id.clone(), name, tx));
 
-    let room = MANAGER.get_or_create(room_id.clone()).await;
+    let room = room_manager.get_or_create(&room_id).await;
 
     if observing {
         room.observe(user.clone()).await;
-        info!("Observer {} has joined room {}", name, room_id);
+        info!("Observer {} has joined room {}", user_name, room_id);
     } else {
         room.join(user.clone()).await;
-        info!("Player {} has joined room {}", name, room_id);
+        info!("Player {} has joined room {}", user_name, room_id);
     }
 
     room.broadcast().await;
@@ -90,11 +102,11 @@ async fn handle_socket(socket: WebSocket, name: String, room_id: String, observi
             Ok(Message::Text(text)) => {
                 match serde_json::from_str::<IncomingMessage>(&text) {
                     Ok(message) => {
-                        debug!("User {} sent message: {:?}", name, message);
-                        room.handle_message(&user_id, &name, message).await;
+                        debug!("User {} sent message: {:?}", user_name, message);
+                        room.handle_message(&user_id, &user_name, message).await;
                     }
                     Err(e) => {
-                        warn!("Failed to parse message from {}: {}", name, e);
+                        warn!("Failed to parse message from {}: {}", user_name, e);
                     }
                 }
             }
@@ -109,7 +121,7 @@ async fn handle_socket(socket: WebSocket, name: String, room_id: String, observi
                 break;
             }
             Err(e) => {
-                warn!("WebSocket error for {}: {}", name, e);
+                warn!("WebSocket error for {}: {}", user_name, e);
                 break;
             }
             _ => {}
@@ -117,9 +129,9 @@ async fn handle_socket(socket: WebSocket, name: String, room_id: String, observi
     }
 
     // Cleanup on disconnect
-    info!("User {} has left the room", name);
+    info!("User {} has left the room", user_name);
     room.leave(&user_id).await;
-    MANAGER.check_vacancy(&room_id).await;
+    room_manager.check_vacancy(&room_id).await;
     room.broadcast().await;
 }
 

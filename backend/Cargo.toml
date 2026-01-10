@@ -19,7 +19,6 @@ futures-util = "0.3"
 tower-service = "0.3"
 rand = "0.8"
 hex = "0.4"
-lazy_static = "1.4"
 
 [build-dependencies]
 ts-rs = { version = "7.0", features = ["serde-compat", "chrono-impl"] }

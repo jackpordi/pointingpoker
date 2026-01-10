@@ -18,7 +18,7 @@ pub struct Room {
 impl Room {
     pub fn new(id: String) -> Self {
         let room = Self {
-            id: id.clone(),
+            id,
             players: Arc::new(RwLock::new(Vec::new())),
             observers: Arc::new(RwLock::new(Vec::new())),
             state: Arc::new(RwLock::new(RoomState::new())),
@@ -35,7 +35,6 @@ impl Room {
                 interval.tick().await;
                 
                 let mut players = players_clone.write().await;
-                let mut observers = observers_clone.write().await;
                 
                 // Check players
                 let dead_users: Vec<String> = players.iter()
@@ -57,6 +56,7 @@ impl Room {
                 players.retain(|user| !dead_users.contains(&user.id));
 
                 // Check observers
+                let mut observers = observers_clone.write().await;
                 let dead_observers: Vec<String> = observers.iter()
                     .filter_map(|user| {
                         if !user.is_alive() {
@@ -96,7 +96,7 @@ impl Room {
         players.push(user.clone());
         
         let mut state = self.state.write().await;
-        state.add_user(user.id.clone(), user.name.clone());
+        state.add_user(&user.id, &user.name);
 
         // Send Identify message
         let identify = OutgoingMessage::Identify { id: user.id.clone() };
@@ -201,7 +201,7 @@ impl Room {
         let (revealed, users) = state.serialize();
         drop(state);
 
-        let observer_payload = StateMessage::new(revealed, users, observer_list.clone());
+        let observer_payload = StateMessage::new(revealed, users, observer_list);
         let outgoing = OutgoingMessage::State(observer_payload);
 
         if let Ok(json) = serde_json::to_string(&outgoing) {

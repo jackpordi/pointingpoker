@@ -1,10 +1,18 @@
 import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Axios from "axios";
 import { InputWithButton } from "components/InputWithButton";
 import { useLastRoom } from "hooks/useLastRoom";
 import { Card, CardContent } from "components/ui/card";
 import { Button } from "components/ui/button";
+
+function generateRoomId(): string {
+  const bytes = new Uint8Array(2);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes)
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+    .toUpperCase();
+}
 
 export function Home() {
   const navigate = useNavigate();
@@ -12,10 +20,9 @@ export function Home() {
 
   const enterRoomDisabled = roomCode.length < 4;
 
-  const goToNewRoom = async () => {
-    const { data } = await Axios.put<{ id: string }>("/api/room");
-    const { id } = data;
-    navigate(`/${id.toLowerCase()}`);
+  const goToNewRoom = () => {
+    const roomId = generateRoomId();
+    navigate(`/${roomId.toLowerCase()}`);
   };
 
   const enterRoom = () => {

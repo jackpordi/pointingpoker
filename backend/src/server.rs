@@ -2,9 +2,10 @@ use axum::{
     extract::Request,
     http::header,
     response::IntoResponse,
-    routing::{get, put},
+    routing::get,
     Router,
 };
+use std::sync::Arc;
 use tower::ServiceBuilder;
 use tower_http::{
     cors::CorsLayer,
@@ -15,8 +16,14 @@ use tower_http::{
 use tracing::info;
 
 use crate::handlers::{http, websocket};
+use crate::room::room_manager::RoomManager;
 
-pub fn create_app() -> Router {
+#[derive(Clone)]
+pub struct AppState {
+    pub room_manager: Arc<RoomManager>,
+}
+
+pub fn create_app(state: AppState) -> Router {
     let cors = CorsLayer::permissive();
 
     let security_headers = ServiceBuilder::new()
@@ -49,21 +56,19 @@ pub fn create_app() -> Router {
         ));
 
     Router::new()
-        .route("/api/room", put(http::create_room))
         .route("/ws", get(websocket::websocket_handler))
         .fallback_service(get(serve_spa))
+        .with_state(state)
         .layer(cors)
         .layer(security_headers)
         .layer(CompressionLayer::new())
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(|request: &Request| {
-                    let method = request.method().clone();
-                    let uri = request.uri().clone();
                     tracing::info_span!(
                         "http_request",
-                        method = %method,
-                        uri = %uri,
+                        method = %request.method(),
+                        uri = %request.uri(),
                     )
                 })
                 .on_response(|response: &axum::response::Response, latency: std::time::Duration, _span: &tracing::Span| {
@@ -87,7 +92,11 @@ async fn serve_spa(req: Request) -> impl IntoResponse {
 }
 
 pub async fn start_server() {
-    let app = create_app();
+    let state = AppState {
+        room_manager: Arc::new(RoomManager::new()),
+    };
+    
+    let app = create_app(state);
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8080")
         .await
         .expect("Failed to bind to address");

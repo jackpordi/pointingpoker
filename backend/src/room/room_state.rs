@@ -17,10 +17,10 @@ impl RoomState {
         self.users.len()
     }
 
-    pub fn add_user(&mut self, id: String, name: String) {
+    pub fn add_user(&mut self, id: &str, name: &str) {
         self.users.push(UserState {
-            id,
-            name,
+            id: id.to_string(),
+            name: name.to_string(),
             picked: crate::types::messages::PickedValue::Null,
         });
     }

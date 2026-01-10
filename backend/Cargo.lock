@@ -784,7 +784,6 @@ dependencies = [
  "axum-extra",
  "futures-util",
  "hex",
- "lazy_static",
  "rand",
  "serde",
  "serde_json",

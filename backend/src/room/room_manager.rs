@@ -14,21 +14,16 @@ impl RoomManager {
         }
     }
 
-    pub async fn get_or_create(&self, id: String) -> Arc<Room> {
+    pub async fn get_or_create(&self, id: &str) -> Arc<Room> {
         let mut rooms = self.rooms.write().await;
         
-        if let Some(room) = rooms.get(&id) {
+        if let Some(room) = rooms.get(id) {
             return room.clone();
         }
 
-        let room = Arc::new(Room::new(id.clone()));
-        rooms.insert(id, room.clone());
+        let room = Arc::new(Room::new(id.to_string()));
+        rooms.insert(id.to_string(), room.clone());
         room
-    }
-
-    pub async fn has_room(&self, id: &str) -> bool {
-        let rooms = self.rooms.read().await;
-        rooms.contains_key(id)
     }
 
     pub async fn check_vacancy(&self, id: &str) {
@@ -41,10 +36,5 @@ impl RoomManager {
             }
         }
     }
-}
-
-// Global singleton instance
-lazy_static::lazy_static! {
-    pub static ref MANAGER: RoomManager = RoomManager::new();
 }
 
