@@ -1,4 +1,4 @@
-import { FunctionComponent } from "preact";
+import React from "react";
 import ConfettiOG from "react-confetti";
 
 interface Props {
@@ -6,7 +6,7 @@ interface Props {
   loop?: boolean;
 }
 
-export const Confetti: FunctionComponent<Props> = ({
+export const Confetti: React.FC<Props> = ({
   active,
   loop = false,
 }) => {

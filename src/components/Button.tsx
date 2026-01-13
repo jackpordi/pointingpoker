@@ -1,24 +1,33 @@
-import { FunctionComponent } from "preact";
+import React from "react";
+import { Button as ShadcnButton } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 interface Props {
   onClick(): void;
   text: string;
   class?: string;
+  className?: string;
   disabled?: boolean;
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
 }
 
-export const Button: FunctionComponent<Props> = ({
+export const Button: React.FC<Props> = ({
   onClick,
   text,
   disabled = false,
+  class: classProp,
+  className,
+  variant = "default",
   ...props
 }) => (
-    <button
-      disabled={disabled}
-      type="button"
-      className={`${props.class!} text-sm md:text-md transition ease-in-out duration-300 text-white bg-gray-800 hover:bg-black focus:ring-4 focus:ring-blue font-medium rounded-full disabled:bg-gray-400`}
-      onClick={onClick}
-    >
-      { text }
-    </button>
+  <ShadcnButton
+    disabled={disabled}
+    type="button"
+    variant={variant}
+    className={cn(classProp, className)}
+    onClick={onClick}
+    {...props}
+  >
+    {text}
+  </ShadcnButton>
 );

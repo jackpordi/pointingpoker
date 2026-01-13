@@ -1,51 +1,47 @@
-import { FunctionComponent } from "preact";
-import { useState } from "preact/hooks";
-import { IObserver } from "types";
-import { ReactComponent as ObserveIcon } from "../assets/observe.svg";
-import { Button } from "./Button";
+import React, { useState } from "react";
+import { Observer } from "types-generated";
+import { Eye } from "lucide-react";
+import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { cn } from "@/lib/utils";
 
 interface Props {
-  observers: IObserver[];
+  observers: Observer[];
 }
 
-export const Observers: FunctionComponent<Props> = ({
-  observers,
-}) => {
-  const [ show, setShow ] = useState(false);
-
+export const Observers: React.FC<Props> = ({ observers }) => {
   if (observers.length === 0) return null;
 
   return (
-    <>
-      <button
-        onClick={() => setShow(true)}
-        className="mt-2 flex flex-row items-center text-gray-600 hover:text-indigo-700 transition-all"
-      >
-        <ObserveIcon className="w-4 h-4 mr-1" />
-        <span>
-          { observers.length }
-        </span>
-      </button>
-      <div
-          onClick={() => setShow(false)}
-        className={`fixed left-0 right-0 top-0 bottom-0 bg-gray-400 flex items-center justify-center duration-300 transition-all ${show ? "bg-opacity-50" : "opacity-0 pointer-events-none"}`}
-      >
-        <div className="flex flex-col items-center justify-center px-8 py-4 bg-white rounded-md">
-          <h3 className="text-xl font-bold">
-            Observers
-          </h3>
-          { observers.map((o) => (
-          <div className="text-lg py-1" key={o.name}>
-              { o.name }
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="mt-2">
+          <Eye className="mr-2 h-4 w-4" />
+          {observers.length} {observers.length === 1 ? "Observer" : "Observers"}
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Observers</DialogTitle>
+          <DialogDescription>
+            People watching this session
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-2">
+          {observers.map((o) => (
+            <div key={o.name} className="text-sm font-medium py-2">
+              {o.name}
             </div>
           ))}
-          <Button
-            class="mt-4 py-3 px-6"
-            text="Done"
-            onClick={() => setShow(false)}
-          />
         </div>
-      </div>
-    </>
+      </DialogContent>
+    </Dialog>
   );
 };

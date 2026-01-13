@@ -1,63 +1,84 @@
-import { useCallback, useState } from "preact/hooks";
-import Axios from "axios";
-import { route } from "preact-router";
+import React, { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { InputWithButton } from "components/InputWithButton";
 import { useLastRoom } from "hooks/useLastRoom";
+import { Card, CardContent } from "components/ui/card";
+import { Button } from "components/ui/button";
+
+function generateRoomId(): string {
+  const bytes = new Uint8Array(2);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes)
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+    .toUpperCase();
+}
 
 export function Home() {
-  const [ roomCode, setRoomCode ] = useState("");
+  const navigate = useNavigate();
+  const [roomCode, setRoomCode] = useState("");
 
   const enterRoomDisabled = roomCode.length < 4;
 
-  const goToNewRoom = async () => {
-    const { data } = await Axios.put<{ id: string }>("/api/room");
-    const { id } = data;
-    route(`/${id.toLowerCase()}`);
+  const goToNewRoom = () => {
+    const roomId = generateRoomId();
+    navigate(`/${roomId.toLowerCase()}`);
   };
 
   const enterRoom = () => {
-    route(`/${roomCode.toLowerCase()}`);
+    navigate(`/${roomCode.toLowerCase()}`);
   };
 
   const { lastRoom } = useLastRoom();
 
   const goToLastRoom = useCallback(() => {
-    if (lastRoom) route(`/${lastRoom[0]}`);
-  }, [ lastRoom ]);
+    if (lastRoom) navigate(`/${lastRoom[0]}`);
+  }, [lastRoom, navigate]);
 
   return (
-    <div className="w-full min-h-screen px-3">
-      <div className="flex flex-col items-center justify-center mx-auto max-w-4xl w-full min-h-screen">
+    <div className="w-full min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center space-y-2">
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
+            Pointing Poker
+          </h1>
+          <p className="text-muted-foreground">
+            Estimate story points with your team
+          </p>
+        </div>
 
-        <h1 className="text-7xl font-lobster my-4">
-          Pointing Poker
-        </h1>
-
-      <div className="flex flex-col items-center w-full md:w-[320px] my-4">
+        <Card>
+          <CardContent className="space-y-4 pt-6">
             <InputWithButton
               id="room-code"
-              label={"Room code"}
+              label="Room code"
               hideLabel
               value={roomCode}
               onChange={(s) => setRoomCode(s.toUpperCase())}
               placeholder="Enter your room code"
-              containerClassName="w-full"
-              inputClassName="text-center text-xl font-bold placeholder:font-normal"
               onClick={enterRoom}
               canContinue={!enterRoomDisabled}
             />
-          <p className="text-gray-400 my-6 text-md flex items-center justify-center flex-col">
-            <button className="hover:text-gray-600 transition-all hover:underline" onClick={() => void goToNewRoom()}>
-              Create a new room
-            </button>
-            { lastRoom !== undefined && (
-              <button className="mt-4 hover:text-gray-600 transition-all hover:underline" onClick={() => void goToLastRoom()}>
-                ...or go to your last room
-              </button>
-            )}
-          </p>
-        </div>
-
+            <div className="space-y-2 text-center">
+              <Button
+                variant="link"
+                onClick={() => void goToNewRoom()}
+                className="text-sm"
+              >
+                Create a new room
+              </Button>
+              {lastRoom !== undefined && (
+                <Button
+                  variant="link"
+                  onClick={() => void goToLastRoom()}
+                  className="text-sm"
+                >
+                  Go to your last room
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

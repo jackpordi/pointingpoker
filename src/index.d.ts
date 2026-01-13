@@ -1,4 +1,5 @@
-declare module "*.svg" {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export const ReactComponent: any;
+declare module "*.svg?react" {
+  import * as React from "react";
+  const ReactComponent: React.FC<React.SVGProps<SVGSVGElement>>;
+  export default ReactComponent;
 }

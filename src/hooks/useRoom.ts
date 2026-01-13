@@ -1,15 +1,15 @@
 import {
   useEffect, useMemo, useRef, useState,
-} from "preact/hooks";
+} from "react";
 import { ReconnectingWs } from "reconnecting-ws";
 import {
   ClearMessage,
-  IUserState,
+  UserState,
   PointsChosenMessage,
   RevealMessage,
   OutgoingMessage,
-  IObserver,
-} from "../types";
+  Observer,
+} from "../types-generated";
 
 function constructWSUrl(
   roomId: string,
@@ -36,17 +36,33 @@ export function useRoom(
 ) {
   const [ ws, setWs ] = useState<ReconnectingWs | undefined>();
 
-  const [ state, setState ] = useState<IUserState[]>([]);
-  const [ observers, setObservers ] = useState<IObserver[]>([]);
+  const [ state, setState ] = useState<UserState[]>([]);
+  const [ observers, setObservers ] = useState<Observer[]>([]);
 
   const [ revealed, setRevealed ] = useState(false);
 
   const [ connected, setConnected ] = useState(false);
 
-  const uid = useRef<string | undefined>();
+  const uid = useRef<string | undefined>(undefined);
   const [ chosen, setChosen ] = useState<number | undefined>();
+  const wsRef = useRef<ReconnectingWs | undefined>(undefined);
+  const isSettingUpRef = useRef<boolean>(false);
 
-  function setupWS() {
+  useEffect(() => {
+    // Clean up existing connection if any
+    const existingWs = wsRef.current;
+    if (existingWs) {
+      existingWs.cleanup();
+      wsRef.current = undefined;
+    }
+
+    // Prevent duplicate connections - if already setting up, skip
+    if (isSettingUpRef.current) {
+      return;
+    }
+
+    isSettingUpRef.current = true;
+
     const onOpen = () => {
       setConnected(true);
     };
@@ -77,14 +93,19 @@ export function useRoom(
       url: constructWSUrl(id, name, observing),
     });
 
+    wsRef.current = socket;
     setWs(socket);
+    isSettingUpRef.current = false;
 
     return () => {
-      socket.cleanup();
+      isSettingUpRef.current = false;
+      const currentWs = wsRef.current;
+      if (currentWs) {
+        currentWs.cleanup();
+        wsRef.current = undefined;
+      }
     };
-  }
-
-  useEffect(() => setupWS(), []);
+  }, [id, name, observing]);
 
   const pick = (n: number | null) => {
     if (!ws) return;
